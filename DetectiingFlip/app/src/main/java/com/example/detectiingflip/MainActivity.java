@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
+    public static float z_value;
 
     SensorManager sensorManager;
     Sensor accelerometerSensor;
@@ -95,10 +96,12 @@ public class MainActivity extends Activity {
         @Override
         public void onSensorChanged(SensorEvent arg0) {
             // TODO Auto-generated method stub
-            float z_value = arg0.values[2];
+             z_value = arg0.values[2];
             if (z_value >= -9.81 ){
                 face.setText("Face UP");
-                mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
+                //if(mNotificationManager.isNotificationPolicyAccessGranted()) {
+                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
+              //  }
 
             }
             else{
