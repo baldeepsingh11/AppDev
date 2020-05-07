@@ -13,6 +13,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -22,7 +24,7 @@ public class MainActivity extends Activity {
     Sensor accelerometerSensor;
     static boolean accelerometerPresent;
      static NotificationManager mNotificationManager;
-    TextView face;
+     static TextView face;
 
     /** Called when the activity is first created. */
     @Override
@@ -43,7 +45,7 @@ public class MainActivity extends Activity {
                             startActivity(intent);
                         }
                     })
-                    .setNegativeButton("Camcel", new DialogInterface.OnClickListener() {
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
@@ -97,18 +99,30 @@ public class MainActivity extends Activity {
         public void onSensorChanged(SensorEvent arg0) {
             // TODO Auto-generated method stub
              z_value = arg0.values[2];
-            if (z_value >= -9.81 ){
-                face.setText("Face UP");
+            if (z_value >= -9.6 ){
+                if(face.getText().toString().equals("Face Down"))
+                    face.setText("Face UP");
                 //if(mNotificationManager.isNotificationPolicyAccessGranted()) {
-                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
+                   // mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
               //  }
 
             }
             else{
-                face.setText("Face DOWN");
 
-                mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                if(face.getText().toString().equals("Face UP")) {
+                    face.setText("Face DOWN");
+                    new CountDownTimer(3000, 1000) {
+                        public void onTick(long milliSecondsUntilDone) {
+                            Log.i("Time left", Long.toString(milliSecondsUntilDone / 1000));
+                        }
 
+                        public void onFinish() {
+                            mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                            Log.i("finished", "finished");
+
+                        }
+                    }.start();
+                }
 
             }
         }};
