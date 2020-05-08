@@ -87,44 +87,51 @@ public class MainActivity extends Activity {
         }
     }
 
-    private SensorEventListener accelerometerListener = new SensorEventListener(){
+    static SensorEventListener accelerometerListener;
 
-        @Override
-        public void onAccuracyChanged(Sensor arg0, int arg1) {
-            // TODO Auto-generated method stub
+    {
+        accelerometerListener = new SensorEventListener() {
 
-        }
-
-        @Override
-        public void onSensorChanged(SensorEvent arg0) {
-            // TODO Auto-generated method stub
-             z_value = arg0.values[2];
-            if (z_value >= -9.6 ){
-                if(face.getText().toString().equals("Face Down"))
-                    face.setText("Face UP");
-                //if(mNotificationManager.isNotificationPolicyAccessGranted()) {
-                   // mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
-              //  }
+            @Override
+            public void onAccuracyChanged(Sensor arg0, int arg1) {
+                // TODO Auto-generated method stub
 
             }
-            else{
 
-                if(face.getText().toString().equals("Face UP")) {
-                    face.setText("Face DOWN");
-                    new CountDownTimer(3000, 1000) {
-                        public void onTick(long milliSecondsUntilDone) {
-                            Log.i("Time left", Long.toString(milliSecondsUntilDone / 1000));
-                        }
+            @Override
+            public void onSensorChanged(SensorEvent arg0) {
+                // TODO Auto-generated method stub
+                z_value = arg0.values[2];
 
-                        public void onFinish() {
-                            mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
-                            Log.i("finished", "finished");
+                if (z_value >= -9.6) {
+                    if (mNotificationManager.getCurrentInterruptionFilter() == 3) {
+                        face.setText("Face UP");
+                        Log.i("Z value", Float.toString(z_value));
+                        //if(mNotificationManager.isNotificationPolicyAccessGranted()) {
+                        mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                        //  }
+                    }
+                } else {
 
-                        }
-                    }.start();
+                    if (mNotificationManager.getCurrentInterruptionFilter() == 1) {
+                        face.setText("Face DOWN");
+                        Log.i("Z value", Float.toString(z_value));
+                        new CountDownTimer(1500, 1000) {
+                            public void onTick(long milliSecondsUntilDone) {
+                                Log.i("Time left", Long.toString(milliSecondsUntilDone / 1000));
+                            }
+
+                            public void onFinish() {
+                                mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                                Log.i("finished", "finished");
+
+                            }
+                        }.start();
+                    }
+
                 }
-
             }
-        }};
+        };
+    }
 
 }
