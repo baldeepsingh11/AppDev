@@ -9,6 +9,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.os.Build;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -25,18 +26,22 @@ public class MyService extends Service {
         @Override
         public int onStartCommand(Intent intent, int flags, int startId){
            MainActivity.accelerometerListener = new SensorEventListener() {
+
                 @Override
                 public void onSensorChanged(SensorEvent event) {
+
                   float z = event.values[2];
-                    if(z>=-9.6) {
+                    Log.i("z value",String.valueOf(z));
+                    if(z>=-9.7){
                         if (mNotificationManager.getCurrentInterruptionFilter()==3) {
                             face.setText("Face UP");
+                            Log.i("msg","face up");
                             // Log.i("Z value",Float.toString(z));
 
                             //Toast.makeText(getApplicationContext(), "Face is up" + MainActivity.z_value, Toast.LENGTH_SHORT).show();
                             //if(mNotificationManager.isNotificationPolicyAccessGranted()) {
                             mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
-                            Log.i("value of g",Float.toString(z));
+                          //  Log.i("value of g",Float.toString(z));
                             //}
                         }
 
@@ -44,28 +49,40 @@ public class MyService extends Service {
                     else {
                         if (mNotificationManager.getCurrentInterruptionFilter()==1) {
                             face.setText("Face DOWN");
-                            Log.i("Z value",Float.toString(z_value));
+                            Log.i("status", "face down");
+                           // Log.i("Z value",Float.toString(z_value));
+
+                            // Vibrate for 500 milliseconds
 
                             //Toast.makeText(this, "Face Down"+MainActivity.z_value, Toast.LENGTH_SHORT).show();
-                            new CountDownTimer(3000, 1000) {
+                         //   Log.i("finished", "finished");
+                            /*new CountDownTimer(3000, 1000) {
                                 public void onTick(long milliSecondsUntilDone) {
-                                    Log.i("Time left", Long.toString(milliSecondsUntilDone / 1000));
+                                   // Log.i("Time left", Long.toString(milliSecondsUntilDone / 1000));
                                 }
 
                                 public void onFinish() {
-                                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-// Vibrate for 500 milliseconds
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                                    } else {
-                                        //deprecated in API 26
-                                        v.vibrate(500);
-                                    }
-                                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
-                                    Log.i("finished", "finished");
+
+
 
                                 }
-                            }.start();
+                            }.start();*/
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Do something after 5s = 5000ms
+                                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        v.vibrate(VibrationEffect.createOneShot(1000, VibrationEffect.DEFAULT_AMPLITUDE));
+                                    } else {
+                                        //deprecated in API 26
+                                        v.vibrate(1000);
+                                    }
+
+                                }
+                            }, 2000);
                         }
                     }
                 }

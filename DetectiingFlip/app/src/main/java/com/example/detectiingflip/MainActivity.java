@@ -89,7 +89,7 @@ public class MainActivity extends Activity {
 
     static SensorEventListener accelerometerListener;
 
-    {
+   /* {
         accelerometerListener = new SensorEventListener() {
 
             @Override
@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
             public void onSensorChanged(SensorEvent arg0) {
                 // TODO Auto-generated method stub
                 z_value = arg0.values[2];
-
+                Log.i("Z value", Float.toString(z_value));
                 if (z_value >= -9.6) {
                     if (mNotificationManager.getCurrentInterruptionFilter() == 3) {
                         face.setText("Face UP");
@@ -115,23 +115,23 @@ public class MainActivity extends Activity {
 
                     if (mNotificationManager.getCurrentInterruptionFilter() == 1) {
                         face.setText("Face DOWN");
-                        Log.i("Z value", Float.toString(z_value));
-                        new CountDownTimer(1500, 1000) {
+
+                        *//*new CountDownTimer(1500, 1000) {
                             public void onTick(long milliSecondsUntilDone) {
                                 Log.i("Time left", Long.toString(milliSecondsUntilDone / 1000));
                             }
 
                             public void onFinish() {
                                 mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
-                                Log.i("finished", "finished");
+                              //  Log.i("finished", "finished");
 
                             }
-                        }.start();
+                        }.start();*//*
                     }
 
                 }
             }
-        };
-    }
+        };*/
+ //   }
 
 }
