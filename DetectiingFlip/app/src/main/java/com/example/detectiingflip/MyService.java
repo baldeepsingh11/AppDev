@@ -31,9 +31,9 @@ public class MyService extends Service {
                 public void onSensorChanged(SensorEvent event) {
 
                   float z = event.values[2];
-                    Log.i("z value",String.valueOf(z));
+                    //Log.v("z value",String.valueOf(z));
                     if(z>=-9.7){
-                        if (mNotificationManager.getCurrentInterruptionFilter()==3) {
+                        if (mNotificationManager.getCurrentInterruptionFilter()==NotificationManager.INTERRUPTION_FILTER_NONE) {
                             face.setText("Face UP");
                             Log.i("msg","face up");
                             // Log.i("Z value",Float.toString(z));
@@ -47,7 +47,7 @@ public class MyService extends Service {
 
                     }
                     else {
-                        if (mNotificationManager.getCurrentInterruptionFilter()==1) {
+                        if (mNotificationManager.getCurrentInterruptionFilter()==NotificationManager.INTERRUPTION_FILTER_ALL) {
                             face.setText("Face DOWN");
                             Log.i("status", "face down");
                            // Log.i("Z value",Float.toString(z_value));
@@ -67,10 +67,7 @@ public class MyService extends Service {
 
                                 }
                             }.start();*/
-                            final Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
+
                                     // Do something after 5s = 5000ms
                                     mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
                                     Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -81,8 +78,8 @@ public class MyService extends Service {
                                         v.vibrate(1000);
                                     }
 
-                                }
-                            }, 2000);
+
+
                         }
                     }
                 }
@@ -94,7 +91,7 @@ public class MyService extends Service {
             };
 
 
-            onTaskRemoved(intent);
+
 
             return START_STICKY;
         }
@@ -109,8 +106,21 @@ public class MyService extends Service {
             Intent restartServiceIntent = new Intent(getApplicationContext(),this.getClass());
             restartServiceIntent.setPackage(getPackageName());
             startService(restartServiceIntent);
+            Log.e("error ","task removed");
             super.onTaskRemoved(rootIntent);
         }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
     }
+
+    @Override
+    public void onDestroy() {
+
+        Log.e("error","service destroyed");
+        super.onDestroy();
+    }
+}
 
 
