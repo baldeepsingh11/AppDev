@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     SensorManager sensorManager;
     Sensor accelerometerSensor;
+    Sensor proximitySensor;
     static boolean accelerometerPresent;
     static NotificationManager mNotificationManager;
     static TextView face;
@@ -53,11 +54,12 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .show();
 
-        }
+        }     // permission
 
         face = (TextView)findViewById(R.id.face);
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if(sensorList.size() > 0){
             accelerometerPresent = true;
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if(accelerometerPresent){
             sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
@@ -92,11 +95,13 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         if(accelerometerPresent){
             sensorManager.unregisterListener(accelerometerListener);
+
+
         }
     }
     static SensorEventListener accelerometerListener;
 
-    {
+    /*{
         accelerometerListener = new SensorEventListener() {
 
             @Override
@@ -138,6 +143,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-    }
+    }*/
 
 }

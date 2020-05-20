@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.TextView;
@@ -24,6 +25,10 @@ import static com.example.flip.MainActivity.face;
 import static com.example.flip.MainActivity.mNotificationManager;
 
 public class ExampleService extends Service {
+    float z= -20;
+    float pValue ;
+    boolean proximity=false;
+    boolean accelerometer=false;
 
 
 
@@ -32,6 +37,7 @@ public class ExampleService extends Service {
     public void onCreate() {
 
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -49,17 +55,44 @@ public class ExampleService extends Service {
             @Override
             public void onSensorChanged(SensorEvent event) {
 
-                float z = event.values[2];
-                Log.i("z value",String.valueOf(z));
-                if(z>=-9.7){
-                    if (mNotificationManager.getCurrentInterruptionFilter()==3) {
+
+                if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER)
+                {
+                    if(event.values[2]<=-9.5)
+                    {
+                        accelerometer = true;
+                    }
+                    else
+                    {
+                        accelerometer=false;
+                    }
+                    Log.i("z value", String.valueOf(event.values[2]));
+
+                }
+                if(event.sensor.getType()==Sensor.TYPE_PROXIMITY)
+                {
+                    if(event.values[0]==0.0)
+                    {
+                        proximity=true;
+                    }
+                    else
+                    {
+                        proximity=false;
+                    }
+
+                    Log.i("pValue", String.valueOf(event.values[0]));
+                }
+
+
+                if(!accelerometer||!proximity){
+                    if (mNotificationManager.getCurrentInterruptionFilter()==NotificationManager.INTERRUPTION_FILTER_NONE) {
                         face.setText("Face UP");
 
                         mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
                     }
                 }
-                else {
-                    if (mNotificationManager.getCurrentInterruptionFilter()==1) {
+                else if(accelerometer&&proximity) {
+                    if (mNotificationManager.getCurrentInterruptionFilter()==NotificationManager.INTERRUPTION_FILTER_ALL) {
                         face.setText("Face DOWN");
                         mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
                     }
