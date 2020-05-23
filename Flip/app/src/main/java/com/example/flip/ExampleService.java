@@ -66,7 +66,7 @@ public class ExampleService extends Service {
                     {
                         accelerometer=false;
                     }
-                    Log.i("z value", String.valueOf(event.values[2]));
+                    //Log.i("z value", String.valueOf(event.values[2]));
 
                 }
                 if(event.sensor.getType()==Sensor.TYPE_PROXIMITY)
