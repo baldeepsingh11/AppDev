@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public  void stopService(View view){
         Intent serviceIntent = new Intent(this , ExampleService.class);
-        stopService(serviceIntent);
+        startService(serviceIntent);
     }
     @Override
     protected void onResume() {
