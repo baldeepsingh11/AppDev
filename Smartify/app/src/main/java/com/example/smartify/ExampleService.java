@@ -67,7 +67,7 @@ public class ExampleService extends Service {
                             proximity=false;
                         }
 
-                        Log.i("pValue", String.valueOf(event.values[0]));
+                      //  Log.i("pValue", String.valueOf(event.values[0]));
                     }
 
 
