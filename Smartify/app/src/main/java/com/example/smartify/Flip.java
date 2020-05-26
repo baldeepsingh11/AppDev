@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import android.view.View;
+import android.widget.Toast;
 
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
@@ -46,8 +47,19 @@ public class Flip extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+
+                if(ExampleService.flip==true)
+                {
+                    ExampleService.flip=false;
+                    Toast.makeText(Flip.this, "Switched off", Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    ExampleService.flip=true;
+                    Toast.makeText(Flip.this, "Switched on", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

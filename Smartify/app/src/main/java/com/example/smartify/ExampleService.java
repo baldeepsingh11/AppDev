@@ -20,6 +20,7 @@ import android.os.Message;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import static com.example.smartify.MainActivity.mNotificationManager;
@@ -31,6 +32,7 @@ public class ExampleService extends Service {
     boolean accelerometer=false;
     private Looper serviceLooper;
     private ServiceHandler serviceHandler;
+    static boolean flip;
 
 
     private final class ServiceHandler extends Handler {
@@ -41,62 +43,56 @@ public class ExampleService extends Service {
         public void handleMessage(Message msg) {
             // Normally we would do some work here, like download a file.
             // For our sample, we just sleep for 5 seconds.
-            MainActivity.accelerometerListener = new SensorEventListener() {
+            Log.i("flipStatus",String.valueOf(flip));
 
-                @Override
-                public void onSensorChanged(SensorEvent event) {
+                MainActivity.accelerometerListener = new SensorEventListener() {
 
+                    @Override
+                    public void onSensorChanged(SensorEvent event) {
 
-                    if(event.sensor.getType()== Sensor.TYPE_ACCELEROMETER)
-                    {
-                        if(event.values[2]<=-9.5)
-                        {
-                            accelerometer = true;
-                        }
-                        else
-                        {
-                            accelerometer=false;
-                        }
-                        Log.i("z value", String.valueOf(event.values[2]));
+                        if(flip) {
+                            if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                                if (event.values[2] <= -9.5) {
+                                    accelerometer = true;
+                                } else {
+                                    accelerometer = false;
+                                }
+                                //  Log.i("z value", String.valueOf(event.values[2]));
 
-                    }
-                    if(event.sensor.getType()==Sensor.TYPE_PROXIMITY)
-                    {
-                        if(event.values[0]==0.0)
-                        {
-                            proximity=true;
-                        }
-                        else
-                        {
-                            proximity=false;
-                        }
+                            }
+                            if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+                                if (event.values[0] == 0.0) {
+                                    proximity = true;
+                                } else {
+                                    proximity = false;
+                                }
 
-                      //  Log.i("pValue", String.valueOf(event.values[0]));
-                    }
+                                //  Log.i("pValue", String.valueOf(event.values[0]));
+                            }
 
 
-                    if(!accelerometer||!proximity){
-                        if (mNotificationManager.getCurrentInterruptionFilter()== NotificationManager.INTERRUPTION_FILTER_NONE) {
-                            //    face.setText("Face UP");
+                            if (!accelerometer || !proximity) {
+                                if (mNotificationManager.getCurrentInterruptionFilter() == NotificationManager.INTERRUPTION_FILTER_NONE) {
+                                    //    face.setText("Face UP");
 
-                            mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
-                        }
-                    }
-                    else if(accelerometer&&proximity) {
-                        if (mNotificationManager.getCurrentInterruptionFilter()==NotificationManager.INTERRUPTION_FILTER_ALL) {
-                            //    face.setText("Face DOWN");
-                            mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                                }
+                            } else if (accelerometer && proximity) {
+                                if (mNotificationManager.getCurrentInterruptionFilter() == NotificationManager.INTERRUPTION_FILTER_ALL) {
+                                    //    face.setText("Face DOWN");
+                                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                                }
+                            }
                         }
                     }
-                }
 
-                @Override
-                public void onAccuracyChanged(Sensor sensor, int accuracy) {
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-                }
-            };
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
+                    }
+                };
+                // Stop the service using the startId, so that we don't stop
+                // the service in the middle of handling another job
 
         }
     }
@@ -114,6 +110,7 @@ public class ExampleService extends Service {
         serviceHandler = new ServiceHandler(serviceLooper);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startMyOwnForeground();
+
         else
             startForeground(1, new Notification());
 
@@ -121,6 +118,7 @@ public class ExampleService extends Service {
 
 
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void startMyOwnForeground(){
         String NOTIFICATION_CHANNEL_ID = "com.example.simpleapp";
         String channelName = "My Background Service";
