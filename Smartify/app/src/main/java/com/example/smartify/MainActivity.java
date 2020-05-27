@@ -29,6 +29,10 @@ public class MainActivity extends AppCompatActivity {
         Intent flipIntent=new Intent(MainActivity.this,Flip.class);
         startActivity(flipIntent);
     }
+    public void location(View view){
+        Intent locationIntent=new Intent(MainActivity.this,MapsActivity.class);
+        startActivity(locationIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

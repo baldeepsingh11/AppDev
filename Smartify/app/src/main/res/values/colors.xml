@@ -6,5 +6,6 @@
         <color name="colorWhite">#FFFFFF</color>
         <color name="whiteTransparent">#B3FFFFFF</color>
         <color name="colorTransparentWhite">#cccccc</color>
+    <color name="redTransparent">#80FF0000</color>
     </resources>
 
