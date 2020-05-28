@@ -6,13 +6,13 @@
             android:title="Allow alarms"
             android:icon="@android:drawable/ic_menu_preferences">
         </item>
-        <item android:id="@+id/offline"
+       <!-- <item android:id="@+id/offline"
             android:titleCondensed="Persist"
             android:title="Make me offline"
             android:icon="@android:drawable/ic_menu_preferences"
             android:checkable="true">
         </item>
-
+-->
     </group>
     <item android:id="@+id/help"
         android:title="Help">

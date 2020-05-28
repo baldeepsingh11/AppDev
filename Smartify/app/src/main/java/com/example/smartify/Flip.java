@@ -6,19 +6,82 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.Toast;
+
+import java.security.acl.Group;
+import java.util.zip.Inflater;
 
 import co.mobiwise.materialintro.shape.Focus;
 import co.mobiwise.materialintro.shape.FocusGravity;
 import co.mobiwise.materialintro.shape.ShapeType;
 import co.mobiwise.materialintro.view.MaterialIntroView;
 
+import static com.example.smartify.ExampleService.flipSettings;
+
 public class Flip extends AppCompatActivity {
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.flip_menu,menu);
+        if(flipSettings==3)
+        menu.getItem(0).setChecked(true);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+           /* case R.id.offline:
+                if(item.isChecked())
+                {
+                    item.setChecked(false);
+                    //flipSettings[0]=0;
+                }
+                else
+                {
+                    item.setChecked(true);
+                   // flipSettings[0]=1;
+                }
+                return true;*/
+            case R.id.alarm:
+                if(item.isChecked())
+                {
+                    item.setChecked(false);
+                    flipSettings=2;
+                }
+                else
+                {
+                    item.setChecked(true);
+                    flipSettings=3;
+                }
+                return true;
+
+            default:
+
+
+
+
+
+        }
+
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +125,13 @@ public class Flip extends AppCompatActivity {
                 }
             }
         });
+
+        /*if(flipSettings==3)
+        {
+            MenuItem alarms = findViewById(R.id.alarm);
+            alarms.setChecked(true);
+        }*/
+
     }
 
 }

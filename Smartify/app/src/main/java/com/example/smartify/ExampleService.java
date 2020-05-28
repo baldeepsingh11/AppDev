@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -23,16 +24,20 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+
 import static com.example.smartify.MainActivity.mNotificationManager;
 
 public class ExampleService extends Service {
     float z= -20;
     float pValue ;
-    boolean proximity=false;
+    boolean proximity=true;
     boolean accelerometer=false;
     private Looper serviceLooper;
     private ServiceHandler serviceHandler;
     static boolean flip;
+    int fFlag=0;
+    static int flipSettings=2;
+    WifiManager wifiManager;
 
 
     private final class ServiceHandler extends Handler {
@@ -50,14 +55,14 @@ public class ExampleService extends Service {
                     @Override
                     public void onSensorChanged(SensorEvent event) {
 
-                        if(flip) {
+                            if(flip) {
                             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                                 if (event.values[2] <= -9.5) {
                                     accelerometer = true;
                                 } else {
                                     accelerometer = false;
                                 }
-                                //  Log.i("z value", String.valueOf(event.values[2]));
+                                 Log.i("z value", String.valueOf(event.values[2]));
 
                             }
                             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -72,15 +77,19 @@ public class ExampleService extends Service {
 
 
                             if (!accelerometer || !proximity) {
-                                if (mNotificationManager.getCurrentInterruptionFilter() == NotificationManager.INTERRUPTION_FILTER_NONE) {
+                                Log.i("status","faceup");
+                               if (fFlag==1) {
                                     //    face.setText("Face UP");
-
                                     mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                                    fFlag=0;
+
                                 }
+
                             } else if (accelerometer && proximity) {
-                                if (mNotificationManager.getCurrentInterruptionFilter() == NotificationManager.INTERRUPTION_FILTER_ALL) {
+                               if (fFlag==0) {
                                     //    face.setText("Face DOWN");
-                                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                                   mNotificationManager.setInterruptionFilter(flipSettings);
+                                   fFlag=1;
                                 }
                             }
                         }
@@ -113,6 +122,7 @@ public class ExampleService extends Service {
 
         else
             startForeground(1, new Notification());
+         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         Log.i("info","Service Started");
 

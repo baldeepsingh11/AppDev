@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -88,6 +89,16 @@ public class MainActivity extends AppCompatActivity {
         Intent serviceIntent = new Intent(this , ExampleService.class);
         stopService(serviceIntent);
     }
+
+    @Override
+    protected void onStart() {
+        sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+
+        super.onStart();
+    }
+
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -103,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onStop();
         if(accelerometerPresent){
-            sensorManager.unregisterListener(accelerometerListener);
+           // sensorManager.unregisterListener(accelerometerListener);
 
 
         }
