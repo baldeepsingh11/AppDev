@@ -60,16 +60,14 @@ public class ExampleService extends Service {
 
                     @Override
                     public void onSensorChanged(SensorEvent event) {
-                        Log.i("sensor","sensor changed");
-
-                            if(flip) {
+                         if(flip) {
                             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                                 if (event.values[2] <= -9.5) {
                                     accelerometer = true;
                                 } else {
                                     accelerometer = false;
                                 }
-                                 Log.v("z value", String.valueOf(event.values[2]));
+                              //   Log.v("z value", String.valueOf(event.values[2]));
 
                             }
                             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -84,7 +82,7 @@ public class ExampleService extends Service {
 
 
                             if (!accelerometer || !proximity) {
-                                Log.i("status","faceup");
+                          //      Log.i("status","faceup");
                                if (fFlag==1) {
                                     //    face.setText("Face UP");
                                     mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
@@ -122,9 +120,6 @@ public class ExampleService extends Service {
         Log.i("info","Service Started");
 
         HandlerThread thread = new HandlerThread("ServiceStartArguments",16);
-        sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL,serviceHandler);
-        sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL,serviceHandler);
-
         Log.i("info","registered");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startMyOwnForeground();

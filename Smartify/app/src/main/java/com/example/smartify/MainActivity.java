@@ -105,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i("info","resume");
         super.onResume();
         if(accelerometerPresent){
-           /* sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);*/
+            sensorManager.registerListener(ExampleService.accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(ExampleService.accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
