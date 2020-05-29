@@ -13,6 +13,7 @@ import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,9 +21,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    SensorManager sensorManager;
-    Sensor accelerometerSensor;
-    Sensor proximitySensor;
+    static SensorManager sensorManager;
+    static Sensor accelerometerSensor;
+    static Sensor proximitySensor;
     static boolean accelerometerPresent;
     static NotificationManager mNotificationManager;
 
@@ -92,20 +93,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
-
-
+        /*sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);*/
+        Log.i("info","started");
         super.onStart();
     }
 
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
+        Log.i("info","resume");
         super.onResume();
         if(accelerometerPresent){
-            sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-            sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+           /* sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);*/
         }
     }
 
@@ -113,13 +114,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         // TODO Auto-generated method stub
         super.onStop();
+        Log.i("info","stop");
         if(accelerometerPresent){
            // sensorManager.unregisterListener(accelerometerListener);
 
 
         }
     }
-    static SensorEventListener accelerometerListener;
 
+    @Override
+    protected void onDestroy() {
+        Log.i("info","destroy");
+        super.onDestroy();
     }
+}
 

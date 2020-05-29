@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
@@ -25,7 +26,10 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 
+import static com.example.smartify.MainActivity.accelerometerSensor;
 import static com.example.smartify.MainActivity.mNotificationManager;
+import static com.example.smartify.MainActivity.proximitySensor;
+import static com.example.smartify.MainActivity.sensorManager;
 
 public class ExampleService extends Service {
     float z= -20;
@@ -38,9 +42,11 @@ public class ExampleService extends Service {
     int fFlag=0;
     static int flipSettings=2;
     WifiManager wifiManager;
+    static SensorEventListener accelerometerListener;
 
 
     private final class ServiceHandler extends Handler {
+
         public ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -50,10 +56,11 @@ public class ExampleService extends Service {
             // For our sample, we just sleep for 5 seconds.
             Log.i("flipStatus",String.valueOf(flip));
 
-                MainActivity.accelerometerListener = new SensorEventListener() {
+                accelerometerListener = new SensorEventListener() {
 
                     @Override
                     public void onSensorChanged(SensorEvent event) {
+                        Log.i("sensor","sensor changed");
 
                             if(flip) {
                             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -62,7 +69,7 @@ public class ExampleService extends Service {
                                 } else {
                                     accelerometer = false;
                                 }
-                                 Log.i("z value", String.valueOf(event.values[2]));
+                                 Log.v("z value", String.valueOf(event.values[2]));
 
                             }
                             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -112,19 +119,27 @@ public class ExampleService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
+        Log.i("info","Service Started");
+
         HandlerThread thread = new HandlerThread("ServiceStartArguments",16);
-        thread.start();
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
+        sensorManager.registerListener(accelerometerListener, accelerometerSensor, SensorManager.SENSOR_DELAY_NORMAL,serviceHandler);
+        sensorManager.registerListener(accelerometerListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL,serviceHandler);
+
+        Log.i("info","registered");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startMyOwnForeground();
 
         else
             startForeground(1, new Notification());
-         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
-        Log.i("info","Service Started");
+
+        thread.start();
+        serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+        super.onCreate();
+
+
 
 
     }
@@ -155,15 +170,14 @@ public class ExampleService extends Service {
         Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
         serviceHandler.sendMessage(msg);
-
-
-
         return START_NOT_STICKY;
     }
 
 
+
     @Override
     public void onDestroy() {
+        sensorManager.unregisterListener(accelerometerListener);
         super.onDestroy();
     }
 
