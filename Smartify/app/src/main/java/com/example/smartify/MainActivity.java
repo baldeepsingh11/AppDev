@@ -11,6 +11,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -79,7 +80,12 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Oops! No accelerometer present", Toast.LENGTH_SHORT).show();
         }
         Intent serviceIntent = new Intent(this , ExampleService.class);
-        startService(serviceIntent);
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+        startForegroundService(serviceIntent);
+        else
+        {
+            startService(serviceIntent);
+        }
     }
 
     public void startService(View view){
