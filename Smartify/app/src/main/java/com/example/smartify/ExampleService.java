@@ -1,5 +1,6 @@
 package com.example.smartify;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,31 +12,73 @@ import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import static com.example.smartify.MainActivity.accelerometerSensor;
 import static com.example.smartify.MainActivity.mNotificationManager;
+import static com.example.smartify.MainActivity.proximitySensor;
+import static com.example.smartify.MainActivity.sensorManager;
 
 public class ExampleService extends Service {
     float z= -20;
     float pValue ;
-    boolean proximity=false;
+    boolean proximity=true;
     boolean accelerometer=false;
     private Looper serviceLooper;
     private ServiceHandler serviceHandler;
     static boolean flip;
+    int fFlag=0;
+    static int flipSettings=2;
+    WifiManager wifiManager;
+    static SensorEventListener accelerometerListener;
+    class ForegroundCheckTask extends AsyncTask<Context, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Context... params) {
+            final Context context = params[0].getApplicationContext();
+            return isAppOnForeground(context);
+        }
+
+        private boolean isAppOnForeground(Context context) {
+            ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+            if (appProcesses == null) {
+                return false;
+            }
+            final String packageName = context.getPackageName();
+            for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+                if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(packageName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    // Use like this:
 
 
     private final class ServiceHandler extends Handler {
+
         public ServiceHandler(Looper looper) {
             super(looper);
         }
@@ -45,19 +88,19 @@ public class ExampleService extends Service {
             // For our sample, we just sleep for 5 seconds.
             Log.i("flipStatus",String.valueOf(flip));
 
-                MainActivity.accelerometerListener = new SensorEventListener() {
+                accelerometerListener = new SensorEventListener() {
 
                     @Override
                     public void onSensorChanged(SensorEvent event) {
-
-                        if(flip) {
+                        Log.i("info","sensorchanged");
+                         if(flip) {
                             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                                 if (event.values[2] <= -9.5) {
                                     accelerometer = true;
                                 } else {
                                     accelerometer = false;
                                 }
-                                //  Log.i("z value", String.valueOf(event.values[2]));
+                              //   Log.v("z value", String.valueOf(event.values[2]));
 
                             }
                             if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
@@ -72,15 +115,27 @@ public class ExampleService extends Service {
 
 
                             if (!accelerometer || !proximity) {
-                                if (mNotificationManager.getCurrentInterruptionFilter() == NotificationManager.INTERRUPTION_FILTER_NONE) {
+                          //      Log.i("status","faceup");
+                               if (fFlag==1) {
                                     //    face.setText("Face UP");
-
                                     mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                                    fFlag=0;
+
                                 }
+
                             } else if (accelerometer && proximity) {
-                                if (mNotificationManager.getCurrentInterruptionFilter() == NotificationManager.INTERRUPTION_FILTER_ALL) {
+                               if (fFlag==0) {
                                     //    face.setText("Face DOWN");
-                                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE);
+                                   mNotificationManager.setInterruptionFilter(flipSettings);
+                                   Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                           // Vibrate for 500 milliseconds
+                                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                       v.vibrate(VibrationEffect.createOneShot(400, VibrationEffect.DEFAULT_AMPLITUDE));
+                                   } else {
+                                       //deprecated in API 26
+                                       v.vibrate(400);
+                                   }
+                                   fFlag=1;
                                 }
                             }
                         }
@@ -103,18 +158,30 @@ public class ExampleService extends Service {
 
     @Override
     public void onCreate() {
-        super.onCreate();
+        Log.i("info","Service Started");
+
         HandlerThread thread = new HandlerThread("ServiceStartArguments",16);
-        thread.start();
-        serviceLooper = thread.getLooper();
-        serviceHandler = new ServiceHandler(serviceLooper);
+        Log.i("info","registered");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startMyOwnForeground();
 
         else
             startForeground(1, new Notification());
+        wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        try {
+            boolean foregroud = new ForegroundCheckTask().execute(this).get();
+            Log.d("foregoroundCheck", String.valueOf(foregroud));
+        } catch (Exception e) {
+            Log.i("foregrund check","error");
+            e.printStackTrace();
+        }
 
-        Log.i("info","Service Started");
+        thread.start();
+        serviceLooper = thread.getLooper();
+        serviceHandler = new ServiceHandler(serviceLooper);
+        super.onCreate();
+
+
 
 
     }
@@ -145,15 +212,14 @@ public class ExampleService extends Service {
         Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
         serviceHandler.sendMessage(msg);
-
-
-
         return START_NOT_STICKY;
     }
 
 
+
     @Override
     public void onDestroy() {
+        sensorManager.unregisterListener(accelerometerListener);
         super.onDestroy();
     }
 
