@@ -65,7 +65,7 @@
             app:layout_column="0"
             app:layout_row="0" />
         <Button
-            android:id="@+id/earphone"
+            android:id="@+id/location"
             android:layout_width="130dp"
             android:layout_height="130dp"
             android:layout_margin="10dp"

@@ -172,7 +172,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.android.memorableplaces",Context.MODE_PRIVATE);
         try{
-            //sharedPreferences.edit().putString("places",ObjectSerializer.serialize(MainActivity.array)).apply();
+            sharedPreferences.edit().putString("places", com.example.memorableplaces.ObjectSerializer.serialize(MainActivity.array)).apply();
 
         }catch(Exception e){
             e.printStackTrace();

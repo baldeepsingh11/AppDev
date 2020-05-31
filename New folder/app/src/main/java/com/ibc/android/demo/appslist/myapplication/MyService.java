@@ -22,17 +22,21 @@ import androidx.core.app.NotificationCompat;
 import java.util.List;
 
 public class MyService extends Service {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        new CheckRunningActivity().start();
+    }
 
     TextView textView;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (isAppRunning(this, "com.ibc.android.demo.appslist.myapplication")) {
-           Log.i("msg","gvfvjhhdf");
+           Log.i("msg","App running");
         } else {
-            Log.i("msh123","vhdjjhdsbhb");
+            Log.i("msg","App not running");
         }
-
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     public static boolean isAppRunning(final Context context, final String packageName) {

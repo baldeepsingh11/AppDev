@@ -1,5 +1,5 @@
-package com.example.android.memorableplaces;
-import android.util.Log;
+package com.example.smartify;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -58,4 +58,3 @@ public class ObjectSerializer {
     }
 
 }
-
