@@ -16,6 +16,7 @@ import android.hardware.SensorManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -55,6 +56,7 @@ public class ExampleService extends Service {
     static boolean flip;
     int fFlag=0;
     static int flipSettings=2;
+    int innerflag =0;
     WifiManager wifiManager;
     static SensorEventListener accelerometerListener;
     class ForegroundCheckTask extends AsyncTask<Context, Void, Boolean> {
@@ -99,7 +101,7 @@ public class ExampleService extends Service {
 
                     @Override
                     public void onSensorChanged(SensorEvent event) {
-                        Log.i("info","sensorchanged");
+                      //  Log.i("info","sensorchanged");
                          if(flip) {
                             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
                                 if (event.values[2] <= -9.5) {
@@ -132,17 +134,42 @@ public class ExampleService extends Service {
 
                             } else if (accelerometer && proximity) {
                                if (fFlag==0) {
-                                    //    face.setText("Face DOWN");
-                                   mNotificationManager.setInterruptionFilter(flipSettings);
-                                   Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-                                           // Vibrate for 500 milliseconds
-                                   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                       v.vibrate(VibrationEffect.createOneShot(400, VibrationEffect.DEFAULT_AMPLITUDE));
-                                   } else {
-                                       //deprecated in API 26
-                                       v.vibrate(400);
-                                   }
                                    fFlag=1;
+                                    //    face.setText("Face DOWN");
+                                   new CountDownTimer(2000, 100) {
+
+                                       public void onTick(long millisUntilFinished) {
+
+                                           innerflag = 0;
+                                           Log.d("time",String.valueOf(millisUntilFinished));
+                                           if(!accelerometer || !proximity)
+                                           {
+                                               innerflag = 1;
+                                               fFlag=0;
+
+                                           }
+
+                                           //here you can have your logic to set text to edittext
+                                       }
+
+                                       public void onFinish() {
+                                           Log.i("finish","true");
+                                           if(innerflag==0) {
+                                               mNotificationManager.setInterruptionFilter(flipSettings);
+                                               Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                                               // Vibrate for 500 milliseconds
+                                               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                   v.vibrate(VibrationEffect.createOneShot(400, VibrationEffect.DEFAULT_AMPLITUDE));
+                                               } else {
+                                                   //deprecated in API 26
+                                                   v.vibrate(400);
+                                               }
+                                               fFlag = 1;
+                                           }
+                                       }
+
+                                   }.start();
+
                                 }
                             }
                         }

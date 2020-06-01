@@ -42,11 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
-    List<Marker> markers = new ArrayList<Marker>();
+    ArrayList<Integer> arrayList= new ArrayList<Integer>();
+
     Circle circle;
     SeekBar seekBar;
     int flag=0;
@@ -77,14 +77,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
-        for (int i=0 ; i<ExampleService.latitudeList.size();i++){
-           addMarker(i);
-        }
+
         seekBar=(SeekBar) findViewById(R.id.seekBar4);
         seekBar.setProgress(30);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
                 circle.setRadius(progress);
             }
 
@@ -128,11 +127,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
-    }
-
-    private void addMarker(int i) {
-        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(ExampleService.latitudeList.get(i),ExampleService.longitudeList.get(i))));
-        markers.add(marker);
     }
 
 
@@ -184,15 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         catch (Exception e){
             e.printStackTrace();
         }
-        ExampleService.latitudeList.add(latLng.latitude);
-        ExampleService.longitudeList.add(latLng.longitude);
-        ExampleService.dndList.add(1);
-        ExampleService.wifiList.add(1);
-        ExampleService.radiusList.add(30);
-        addMarker(markers.size());
-        Log.i("as",Integer.toString(ExampleService.dndList.get(ExampleService.dndList.size()-1)));
-        Log.i("asd",Integer.toString(markers.size()));
-        Log.i("asdf",Integer.toString(ExampleService.radiusList.get(ExampleService.radiusList.size()-1)));
+        mMap.addMarker(new MarkerOptions().position(latLng).title(Address));
         Log.i("Address",Address);
         Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
         circle.remove();
