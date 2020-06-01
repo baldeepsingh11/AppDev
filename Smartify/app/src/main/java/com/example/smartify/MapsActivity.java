@@ -42,6 +42,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.example.smartify.ExampleService.dndList;
+import static com.example.smartify.ExampleService.latitudeList;
+import static com.example.smartify.ExampleService.longitudeList;
+import static com.example.smartify.ExampleService.radiusList;
+import static com.example.smartify.ExampleService.wifiList;
+
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
 
@@ -53,6 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LatLng x;
     LocationManager locationManager;
     LocationListener locationListener;
+    SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
     public void setOnMapLocation(Location location,String s){
         if(location!=null) {
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -186,17 +193,92 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         ExampleService.latitudeList.add(latLng.latitude);
         ExampleService.longitudeList.add(latLng.longitude);
-        ExampleService.dndList.add(1);
+        dndList.add(1);
         ExampleService.wifiList.add(1);
         ExampleService.radiusList.add(30);
         addMarker(markers.size());
-        Log.i("as",Integer.toString(ExampleService.dndList.get(ExampleService.dndList.size()-1)));
+        Log.i("as",Integer.toString(dndList.get(dndList.size()-1)));
         Log.i("asd",Integer.toString(markers.size()));
         Log.i("asdf",Integer.toString(ExampleService.radiusList.get(ExampleService.radiusList.size()-1)));
         Log.i("Address",Address);
         Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
         circle.remove();
         createCircle(latLng,30);
+        /*try{
+            sharedPreferences.edit().putString("dndList",ObjectSerializer.serialize(dndList)).apply();
+            Log.i("serialized",ObjectSerializer.serialize(dndList));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            sharedPreferences.edit().putString("wifiList",ObjectSerializer.serialize(wifiList)).apply();
+            Log.i("serialized",ObjectSerializer.serialize(wifiList));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            sharedPreferences.edit().putString("latitudeList",ObjectSerializer.serialize(latitudeList)).apply();
+            Log.i("serialized",ObjectSerializer.serialize(dndList));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            sharedPreferences.edit().putString("longitudeList",ObjectSerializer.serialize(longitudeList)).apply();
+            Log.i("serialized",ObjectSerializer.serialize(dndList));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            sharedPreferences.edit().putString("radiusList",ObjectSerializer.serialize(radiusList)).apply();
+            Log.i("serialized",ObjectSerializer.serialize(dndList));
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        ArrayList<String> newFriends=new ArrayList<>();
+        try {
+            newFriends = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("friends", ObjectSerializer.serialize(new ArrayList<String>())));
+            Log.i("newFriends",newFriends.toString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        ArrayList<String> newFriends=new ArrayList<>();
+        try {
+            newFriends = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("friends", ObjectSerializer.serialize(new ArrayList<String>())));
+            Log.i("newFriends",newFriends.toString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        ArrayList<String> newFriends=new ArrayList<>();
+        try {
+            newFriends = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("friends", ObjectSerializer.serialize(new ArrayList<String>())));
+            Log.i("newFriends",newFriends.toString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        ArrayList<String> newFriends=new ArrayList<>();
+        try {
+            newFriends = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("friends", ObjectSerializer.serialize(new ArrayList<String>())));
+            Log.i("newFriends",newFriends.toString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        ArrayList<String> newFriends=new ArrayList<>();
+        try {
+            newFriends = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("friends", ObjectSerializer.serialize(new ArrayList<String>())));
+            Log.i("newFriends",newFriends.toString());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }*/
     }
 
     @Override
