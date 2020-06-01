@@ -18,6 +18,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.Marker;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +29,9 @@ public class MainActivity extends AppCompatActivity {
     static Sensor accelerometerSensor;
     static Sensor proximitySensor;
     static boolean accelerometerPresent;
-    static NotificationManager mNotificationManager;
+    public static NotificationManager mNotificationManager;
+
+
 
     public void Flip(View view){
         Intent flipIntent=new Intent(MainActivity.this,Flip.class);

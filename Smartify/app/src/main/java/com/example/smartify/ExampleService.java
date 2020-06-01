@@ -30,6 +30,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -38,7 +39,13 @@ import static com.example.smartify.MainActivity.mNotificationManager;
 import static com.example.smartify.MainActivity.proximitySensor;
 import static com.example.smartify.MainActivity.sensorManager;
 
+
 public class ExampleService extends Service {
+    public static ArrayList<Integer> dndList= new ArrayList<Integer>();
+    public static ArrayList<Double> latitudeList= new ArrayList<Double>();
+    public static ArrayList<Double> longitudeList= new ArrayList<Double>();
+    public static ArrayList<Integer> wifiList= new ArrayList<Integer>();
+    public static ArrayList<Integer> radiusList= new ArrayList<Integer>();
     float z= -20;
     float pValue ;
     boolean proximity=true;
@@ -211,8 +218,11 @@ public class ExampleService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Message msg = serviceHandler.obtainMessage();
         msg.arg1 = startId;
+        if(latitudeList.size()>0)
+        Log.i("abcd", String.valueOf(latitudeList.get(latitudeList.size()-1)));
+
         serviceHandler.sendMessage(msg);
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
 
