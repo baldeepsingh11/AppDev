@@ -1,6 +1,7 @@
 package com.example.smartify;
 
 import  androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
@@ -22,6 +23,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -49,7 +51,7 @@ import static com.example.smartify.ExampleService.radiusList;
 import static com.example.smartify.ExampleService.wifiList;
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener,GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     List<Marker> markers = new ArrayList<Marker>();
@@ -59,13 +61,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LatLng x;
     LocationManager locationManager;
     LocationListener locationListener;
+    Location mLastLocation;
+    Marker mCurrLocationMarker;
+    int current_Id;
+    int wifiFlag,dndFlag;
     //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
     public void setOnMapLocation(Location location,String s){
         if(location!=null) {
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(userLocation).title(s));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+            mCurrLocationMarker=mMap.addMarker(new MarkerOptions().position(userLocation).title(s));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 18));
         }
         }
     @Override
@@ -83,10 +88,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
 
+        //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
         seekBar=(SeekBar) findViewById(R.id.seekBar4);
-        seekBar.setProgress(30);
+        //seekBar.setProgress(30);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -100,7 +105,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                radiusList.set(current_Id,seekBar.getProgress());
+                Log.i("current id",Integer.toString(current_Id));
             }
         });
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -124,19 +130,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fabWifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (wifiFlag==0){
+                    wifiFlag=1;
+                    wifiList.set(current_Id,1);
+                }
+                if(wifiFlag==1){
+                    wifiFlag=0;
+                    wifiList.set(current_Id,0);
+                }
             }
         });
         fabDnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if(dndFlag==0){
+                    dndFlag=1;
+                    dndList.set(current_Id,1);
+                }
+                if(dndFlag==1){
+                    dndFlag=0;
+                    dndList.set(current_Id,0);
+                }
             }
         });
     }
 
     private void addMarker(int i) {
-        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(ExampleService.latitudeList.get(i),ExampleService.longitudeList.get(i))));
+        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(ExampleService.latitudeList.get(i),ExampleService.longitudeList.get(i)))
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
         markers.add(marker);
     }
 
@@ -147,14 +168,64 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapLongClickListener(this);
         googleMap.setOnMarkerClickListener(this);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        // Add a marker in Sydney, Australia, and move the camera.
-        LatLng chandigarh = new LatLng(30.7350626,76.6934887);
-        mMap.addMarker(new MarkerOptions().position(chandigarh).title("Marker in Chandigarh"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(chandigarh,18));
-        createCircle(chandigarh,30);
         for (int i=0 ; i<ExampleService.latitudeList.size();i++){
             addMarker(i);
         }
+        locationManager=(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener=new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location)
+            {
+                mLastLocation = location;
+                if (mCurrLocationMarker != null)
+                {
+                    mCurrLocationMarker.remove();
+                }
+
+                //Place current location marker
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Your Location");
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+                //move map camera
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,locationListener);
+            Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            setOnMapLocation(lastKnownLocation,"Your Location");
+        }
+        else {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+        }
+
+
+
+
+        // Add a marker in Sydney, Australia, and move the camera.
+        /*LatLng chandigarh = new LatLng(30.7350626,76.6934887);
+        mMap.addMarker(new MarkerOptions().position(chandigarh).title("Marker in Chandigarh"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(chandigarh,18));
+        createCircle(chandigarh,30);*/
+
 
     }
     public void createCircle(LatLng latLng,float radius){
@@ -164,46 +235,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .strokeColor(getColor(R.color.colorPrimary))
                 .strokeWidth(5)
                 .fillColor(getColor(R.color.blueTransparent)));
-        seekBar.setProgress(30);
     }
 
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        String Address="";
-        Geocoder geocoder=new Geocoder(getApplicationContext(), Locale.getDefault());
-        try {
-            List<android.location.Address> listAdress = geocoder.getFromLocation(latLng.latitude,latLng.longitude,1);
-
-            if (listAdress!=null&&listAdress.size()>0){
-                Log.i("Place info",listAdress.get(0).toString());
-            }
-            if(listAdress!=null&&listAdress.size()>0){
-                Address+=listAdress.get(0).getFeatureName()+" ";
-            }
-            if(listAdress!=null&&listAdress.size()>0){
-                Address+=listAdress.get(0).getSubLocality()+" ";
-            }
-            if(listAdress!=null&&listAdress.size()>0){
-                Address+=listAdress.get(0).getLocality();
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
         ExampleService.latitudeList.add(latLng.latitude);
         ExampleService.longitudeList.add(latLng.longitude);
         dndList.add(1);
         ExampleService.wifiList.add(1);
         ExampleService.radiusList.add(30);
+        if (circle!=null){circle.remove();}
+        createCircle(latLng,30);
         addMarker(markers.size());
         Log.i("as",Integer.toString(dndList.get(dndList.size()-1)));
         Log.i("asd",Integer.toString(markers.size()));
-        Log.i("asdf",Integer.toString(ExampleService.radiusList.get(ExampleService.radiusList.size()-1)));
-        Log.i("Address",Address);
+        Log.i("asdf",Integer.toString(radiusList.size()));
+
+
         Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
-        circle.remove();
-        createCircle(latLng,30);
         /*try{
             sharedPreferences.edit().putString("dndList",ObjectSerializer.serialize(dndList)).apply();
             Log.i("serialized",ObjectSerializer.serialize(dndList));
@@ -284,10 +334,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(Marker marker) {
         LatLng pos=marker.getPosition();
-        circle.remove();
+
+        for (int i=0;i<markers.size();i++){
+            if(latitudeList.get(i)==pos.latitude){
+                current_Id=i;
+                Log.i("current id", Integer.toString(i));
+            }
+        }
+        seekBar.setProgress(radiusList.get(current_Id));
+        if(circle!=null){circle.remove();}
+        createCircle(marker.getPosition(),radiusList.get(current_Id));
         //Log.i("pos", "String.valueOf(pos.latitude)");
-        createCircle(pos,30);
-        seekBar.setProgress(30);
+        LinearLayout linearLayout=(LinearLayout) findViewById(R.id.settings);
+        if (flag==0) {
+            linearLayout.animate().translationYBy(-505).setDuration(100);
+            flag=1;
+        }
         return false;
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        LinearLayout linearLayout=(LinearLayout) findViewById(R.id.settings);
+        if (flag==1) {
+            linearLayout.animate().translationYBy(505).setDuration(100);
+            flag=0;
+        }
     }
 }
