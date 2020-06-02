@@ -59,7 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LatLng x;
     LocationManager locationManager;
     LocationListener locationListener;
-    SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
+    //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
     public void setOnMapLocation(Location location,String s){
         if(location!=null) {
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -84,9 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
-        for (int i=0 ; i<ExampleService.latitudeList.size();i++){
-           addMarker(i);
-        }
+
         seekBar=(SeekBar) findViewById(R.id.seekBar4);
         seekBar.setProgress(30);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -154,7 +152,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(chandigarh).title("Marker in Chandigarh"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(chandigarh,18));
         createCircle(chandigarh,30);
-
+        for (int i=0 ; i<ExampleService.latitudeList.size();i++){
+            addMarker(i);
+        }
 
     }
     public void createCircle(LatLng latLng,float radius){

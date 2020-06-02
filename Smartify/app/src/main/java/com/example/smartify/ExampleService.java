@@ -13,6 +13,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -30,6 +31,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
+
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +62,22 @@ public class ExampleService extends Service {
     int innerflag =0;
     WifiManager wifiManager;
     static SensorEventListener accelerometerListener;
+    public  boolean isInside(LatLng origin, LatLng point, double radius)
+    {
+        Location Lorigin = new Location("");
+        Lorigin.setLongitude(origin.longitude);
+        Lorigin.setLatitude(origin.latitude);
+        Location Lpoint = new Location("");
+        Lpoint.setLongitude(point.longitude);
+        Lpoint.setLatitude(point.latitude);
+        if(Lorigin.distanceTo(Lpoint)<radius)
+
+            return true;
+        else
+            return false;
+
+    }
+
     class ForegroundCheckTask extends AsyncTask<Context, Void, Boolean> {
 
         @Override
