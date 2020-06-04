@@ -14,9 +14,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -32,7 +35,10 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +48,8 @@ import static com.example.smartify.MainActivity.accelerometerSensor;
 import static com.example.smartify.MainActivity.mNotificationManager;
 import static com.example.smartify.MainActivity.proximitySensor;
 import static com.example.smartify.MainActivity.sensorManager;
+import static com.example.smartify.MapsActivity.current_Id;
+import static com.example.smartify.MapsActivity.mMap;
 
 
 public class ExampleService extends Service {
@@ -62,7 +70,13 @@ public class ExampleService extends Service {
     int innerflag =0;
     WifiManager wifiManager;
     static SensorEventListener accelerometerListener;
-    public  boolean isInside(LatLng origin, LatLng point, double radius)
+    public static LocationManager locationManager;
+    public static LocationListener locationListener;
+    int dndFlag=0;
+    public static Location mLastLocation;
+    public static Marker mCurrLocationMarker;
+
+    public static boolean isInside(LatLng origin, LatLng point, double radius)
     {
         Location Lorigin = new Location("");
         Lorigin.setLongitude(origin.longitude);
@@ -212,6 +226,55 @@ public class ExampleService extends Service {
     @Override
     public void onCreate() {
         Log.i("info","Service Started");
+        locationManager=(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        locationListener=new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location)
+            {
+                mLastLocation = location;
+                if (mCurrLocationMarker != null)
+                {
+                    mCurrLocationMarker.remove();
+                }
+
+                //Place current location marker
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Your Location");
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                mCurrLocationMarker = mMap.addMarker(markerOptions);
+                for (int i=0;i<dndList.size();i++){
+                    if(ExampleService.isInside(new LatLng(latitudeList.get(i),longitudeList.get(i)),new LatLng(location.getLatitude(),location.getLongitude()),radiusList.get(i))){
+                        if(dndFlag==0&&current_Id!=-1&&dndList.get(i)==1) {
+                            mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
+                            dndFlag=1;
+                        }
+                    }
+                    else {
+                        if(dndFlag==1){mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
+                            dndFlag=0;}
+                    }
+                }
+
+                //move map camera
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
 
         HandlerThread thread = new HandlerThread("ServiceStartArguments",16);
         Log.i("info","registered");

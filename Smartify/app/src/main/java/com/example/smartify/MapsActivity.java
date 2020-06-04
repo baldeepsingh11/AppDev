@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -19,6 +20,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,30 +48,32 @@ import java.util.Locale;
 
 import static com.example.smartify.ExampleService.dndList;
 import static com.example.smartify.ExampleService.latitudeList;
+import static com.example.smartify.ExampleService.locationListener;
+import static com.example.smartify.ExampleService.locationManager;
 import static com.example.smartify.ExampleService.longitudeList;
 import static com.example.smartify.ExampleService.radiusList;
 import static com.example.smartify.ExampleService.wifiList;
+import static com.example.smartify.MainActivity.mNotificationManager;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener,GoogleMap.OnMapClickListener {
 
-    private GoogleMap mMap;
+    public static GoogleMap mMap;
     List<Marker> markers = new ArrayList<Marker>();
     Circle circle;
     SeekBar seekBar;
     int flag=0;
-    LatLng x;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    int current_Id;
-    int wifiFlag,dndFlag;
+    public FloatingActionButton fabDelete ;
+    public FloatingActionButton fabDnd ;
+    public FloatingActionButton fabWifi;
+
+    public static int current_Id=-1;
+    WifiManager wifiManager;
     //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
     public void setOnMapLocation(Location location,String s){
         if(location!=null) {
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            mCurrLocationMarker=mMap.addMarker(new MarkerOptions().position(userLocation).title(s));
+            ExampleService.mCurrLocationMarker=mMap.addMarker(new MarkerOptions().position(userLocation).title(s));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 18));
         }
         }
@@ -95,7 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                circle.setRadius(progress);
+                if (circle!=null) circle.setRadius(progress);
             }
 
             @Override
@@ -112,53 +116,68 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        final FloatingActionButton fabData = findViewById(R.id.fabOpen);
-        fabData.setImageResource(R.drawable.ic_perm_data_setting_black_24dp);
-        fabData.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MapsActivity.this, R.color.colorWhite)));
-        final FloatingActionButton fabDnd = findViewById(R.id.fabDnd);
+        fabDelete = findViewById(R.id.fabOpen);
+        fabDelete.setImageResource(R.drawable.ic_delete_forever_black_24dp);
+        fabDelete.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MapsActivity.this, R.color.colorWhite)));
+        fabDnd = findViewById(R.id.fabDnd);
         fabDnd.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
         fabDnd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MapsActivity.this, R.color.colorWhite)));
-        final FloatingActionButton fabWifi = findViewById(R.id.fabWifi);
+        fabWifi = findViewById(R.id.fabWifi);
         fabWifi.setImageResource(R.drawable.ic_signal_wifi_4_bar_black_24dp);
         fabWifi.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(MapsActivity.this, R.color.colorWhite)));
-        fabData.setOnClickListener(new View.OnClickListener() {
+        fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                delete(current_Id);
+                current_Id=-1;
             }
         });
         fabWifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (wifiFlag==0){
-                    wifiFlag=1;
+                if (wifiList.get(current_Id)==0){
                     wifiList.set(current_Id,1);
+                    fabWifi.setImageResource(R.drawable.ic_signal_wifi_4_bar_black_24dp);
                 }
-                if(wifiFlag==1){
-                    wifiFlag=0;
+                else if(wifiList.get(current_Id)==1){
                     wifiList.set(current_Id,0);
+                    fabWifi.setImageResource(R.drawable.ic_signal_wifi_off_black_24dp);
                 }
             }
         });
         fabDnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(dndFlag==0){
-                    dndFlag=1;
+                if(dndList.get(current_Id)==0){
                     dndList.set(current_Id,1);
+                    fabDnd.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
                 }
-                if(dndFlag==1){
-                    dndFlag=0;
+                else if(dndList.get(current_Id)==1){
                     dndList.set(current_Id,0);
+                    fabDnd.setImageResource(R.drawable.ic_do_not_disturb_off_black_24dp);
                 }
             }
         });
     }
 
+    private void delete(int id) {
+        markers.get(id).remove();
+        circle.remove();
+        markers.remove(id);
+        dndList.remove(id);
+        radiusList.remove(id);
+        wifiList.remove(id);
+        latitudeList.remove(id);
+        longitudeList.remove(id);
+        LinearLayout linearLayout=(LinearLayout) findViewById(R.id.settings);
+        if (flag==1) {
+            linearLayout.animate().translationYBy(505).setDuration(100);
+            flag=0;}
+    }
+
     private void addMarker(int i) {
-        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(ExampleService.latitudeList.get(i),ExampleService.longitudeList.get(i)))
-        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET)));
-        markers.add(marker);
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(ExampleService.latitudeList.get(i),ExampleService.longitudeList.get(i)))
+        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))));
     }
 
 
@@ -171,43 +190,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i=0 ; i<ExampleService.latitudeList.size();i++){
             addMarker(i);
         }
-        locationManager=(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationListener=new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location)
-            {
-                mLastLocation = location;
-                if (mCurrLocationMarker != null)
-                {
-                    mCurrLocationMarker.remove();
-                }
 
-                //Place current location marker
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title("Your Location");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                mCurrLocationMarker = mMap.addMarker(markerOptions);
-
-                //move map camera
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,locationListener);
             Location lastKnownLocation=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -341,9 +324,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("current id", Integer.toString(i));
             }
         }
-        seekBar.setProgress(radiusList.get(current_Id));
+        Log.i("dnd", String.valueOf(dndList.get(current_Id)));
+        Log.i("wifi", String.valueOf(wifiList.get(current_Id)));
+        if (current_Id!=-1){
+            if(dndList.get(current_Id)==1) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
+            else if(dndList.get(current_Id)==0) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_off_black_24dp);
+            if(wifiList.get(current_Id)==1) fabWifi.setImageResource(R.drawable.ic_signal_wifi_4_bar_black_24dp);
+            if(wifiList.get(current_Id)==0) fabWifi.setImageResource(R.drawable.ic_signal_wifi_off_black_24dp);
+        }
+        if(current_Id!=-1) seekBar.setProgress(radiusList.get(current_Id));
         if(circle!=null){circle.remove();}
-        createCircle(marker.getPosition(),radiusList.get(current_Id));
+        if(current_Id!=-1) createCircle(marker.getPosition(),radiusList.get(current_Id));
         //Log.i("pos", "String.valueOf(pos.latitude)");
         LinearLayout linearLayout=(LinearLayout) findViewById(R.id.settings);
         if (flag==0) {
