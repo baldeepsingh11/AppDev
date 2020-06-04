@@ -12,19 +12,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -40,11 +32,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.example.smartify.ExampleService.dndList;
 import static com.example.smartify.ExampleService.latitudeList;
@@ -53,7 +43,7 @@ import static com.example.smartify.ExampleService.locationManager;
 import static com.example.smartify.ExampleService.longitudeList;
 import static com.example.smartify.ExampleService.radiusList;
 import static com.example.smartify.ExampleService.wifiList;
-import static com.example.smartify.MainActivity.mNotificationManager;
+
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener,GoogleMap.OnMapClickListener {
@@ -68,7 +58,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public FloatingActionButton fabWifi;
 
     public static int current_Id=-1;
-    WifiManager wifiManager;
     //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
     public void setOnMapLocation(Location location,String s){
         if(location!=null) {
@@ -229,14 +218,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ExampleService.wifiList.add(1);
         ExampleService.radiusList.add(30);
         if (circle!=null){circle.remove();}
-        createCircle(latLng,30);
+        int check=0;
+        for (int i = 0; i <dndList.size()-1 ; i++) {
+            if (isIntersecting(latLng, new LatLng(latitudeList.get(i), longitudeList.get(i)), 60)) {
+                createRedCircle( new LatLng(latitudeList.get(i), longitudeList.get(i)),radiusList.get(i));
+                createRedCircle(new LatLng(latitudeList.get(dndList.size()-1),longitudeList.get(dndList.size()-1)),30);
+                Toast.makeText(this, "Intersecting", Toast.LENGTH_SHORT).show();
+                check=1;
+            }
+        }
+        if (check==0)  createCircle(latLng,30);
         addMarker(markers.size());
         Log.i("as",Integer.toString(dndList.get(dndList.size()-1)));
         Log.i("asd",Integer.toString(markers.size()));
         Log.i("asdf",Integer.toString(radiusList.size()));
 
 
-        Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
+       // Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
         /*try{
             sharedPreferences.edit().putString("dndList",ObjectSerializer.serialize(dndList)).apply();
             Log.i("serialized",ObjectSerializer.serialize(dndList));
@@ -312,6 +310,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         catch (Exception e){
             e.printStackTrace();
         }*/
+    }
+
+    private void createRedCircle(LatLng latLng, float radius) {
+        Circle circle1 = mMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(radius)
+                .strokeColor(getColor(R.color.red))
+                .strokeWidth(5)
+                .fillColor(getColor(R.color.redTransparent)));
+    }
+
+    private boolean isIntersecting(LatLng origin1, LatLng origin2, double distance) {
+        Location Lorigin = new Location("");
+        Lorigin.setLongitude(origin1.longitude);
+        Lorigin.setLatitude(origin1.latitude);
+        Location Lpoint = new Location("");
+        Lpoint.setLongitude(origin2.longitude);
+        Lpoint.setLatitude(origin2.latitude);
+        if(Lorigin.distanceTo(Lpoint)<distance)
+            return true;
+        else
+            return false;
+
     }
 
     @Override

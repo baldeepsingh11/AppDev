@@ -58,6 +58,7 @@ public class ExampleService extends Service {
     public static ArrayList<Double> longitudeList= new ArrayList<Double>();
     public static ArrayList<Integer> wifiList= new ArrayList<Integer>();
     public static ArrayList<Integer> radiusList= new ArrayList<Integer>();
+
     float z= -20;
     float pValue ;
     boolean proximity=true;
@@ -246,10 +247,14 @@ public class ExampleService extends Service {
                 mCurrLocationMarker = mMap.addMarker(markerOptions);
                 for (int i=0;i<dndList.size();i++){
                     if(ExampleService.isInside(new LatLng(latitudeList.get(i),longitudeList.get(i)),new LatLng(location.getLatitude(),location.getLongitude()),radiusList.get(i))){
-                        if(dndFlag==0&&current_Id!=-1&&dndList.get(i)==1) {
+                        if(dndFlag==0&&dndList.get(i)==1) {
                             mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
                             dndFlag=1;
                         }
+                       // if(wifiFlag==0&&current_Id!=-1&&dndList.get(i)==1) {
+
+                        //}
+
                     }
                     else {
                         if(dndFlag==1){mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
