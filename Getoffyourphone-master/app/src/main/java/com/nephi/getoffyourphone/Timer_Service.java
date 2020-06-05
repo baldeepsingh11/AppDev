@@ -15,6 +15,7 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -24,6 +25,8 @@ import android.os.SystemClock;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -263,11 +266,18 @@ public class Timer_Service extends Service {
             int count = (int) db.getAppsCount();
             for (int i = 1; i <= count; ++i) {
                 if (printForegroundTask().equalsIgnoreCase(db.get_app_PKG(i))) {
-                    startActivity(lockIntent);
+                    setAutoOrientationEnabled(this,true);
                 }
             }
         }
     }
+
+    public static void setAutoOrientationEnabled(Context context, boolean enabled)
+    {
+        Settings.System.putInt( context.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
+    }
+
+
 
     private void lock_State() throws Exception {
         if (db.get_on_off(1) == 1) {
@@ -354,7 +364,7 @@ public class Timer_Service extends Service {
             currentApp = tasks.get(0).processName;
         }
 
-        Log.e("Foreground App", "Current App in foreground is: " + currentApp);
+        Log.i("Foreground App", "Current App in foreground is: " + currentApp);
         return currentApp;
     }
 
