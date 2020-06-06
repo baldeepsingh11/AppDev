@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -17,5 +18,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent serviceIntent = new Intent(this , MyService.class);
-        startService(serviceIntent);    }
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O)
+            startForegroundService(serviceIntent);
+        else
+        {
+            startService(serviceIntent);
+        }    }
 }
