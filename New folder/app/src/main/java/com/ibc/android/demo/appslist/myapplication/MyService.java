@@ -25,13 +25,13 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        new CheckRunningActivity().start();
+     //   new CheckRunningActivity().start();
     }
 
     TextView textView;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (isAppRunning(this, "com.ibc.android.demo.appslist.myapplication")) {
+        if (isAppRunning(this, "com.example.smartify")) {
            Log.i("msg","App running");
         } else {
             Log.i("msg","App not running");
@@ -45,7 +45,9 @@ public class MyService extends Service {
         if (procInfos != null)
         {
             for (final ActivityManager.RunningAppProcessInfo processInfo : procInfos) {
+                Log.i("packageName",processInfo.processName);
                 if (processInfo.processName.equals(packageName)) {
+                   // Log.i("packageRunning",packageName);
                     return true;
                 }
             }

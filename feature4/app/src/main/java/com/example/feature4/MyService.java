@@ -31,8 +31,11 @@ import android.widget.Toast;
                     break;
                 case(1):
                     Log.d(TAG, "Headset plugged");
-                    Intent intent1 = new Intent();
-                    intent1.setComponent(new ComponentName("com.example", "com.google.android.youtube"));
+                    Intent intent1 = new Intent(context,MainActivity2.class);
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.youtube");
+                    if (launchIntent != null) {
+                        startActivity(launchIntent);//null pointer check in case package name was not found
+                    }
                     intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(intent1);
                     break;
