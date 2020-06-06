@@ -55,9 +55,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     int flag=0;
     public FloatingActionButton fabDelete ;
     public FloatingActionButton fabDnd ;
+    int redCheck=0;
     public FloatingActionButton fabWifi;
 
     public static int current_Id=-1;
+    public List<Circle> circles=new ArrayList<>();
+    public ArrayList<Integer> flagArray=new ArrayList<>();
+
     //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
     public void setOnMapLocation(Location location,String s){
         if(location!=null) {
@@ -88,7 +92,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (circle!=null) circle.setRadius(progress);
+                if (circle != null) circle.setRadius(progress);
+                for (int id = 0; id < dndList.size(); id++) {
+                    flagArray.add(0);
+                    if (isIntersecting(new LatLng(latitudeList.get(current_Id), longitudeList.get(current_Id)), new LatLng(latitudeList.get(id), longitudeList.get(id)), progress + radiusList.get(id)) && id != current_Id) {
+                        if (circle != null) circle.remove();
+                            createRedCircle(new LatLng(latitudeList.get(current_Id),longitudeList.get(current_Id)),progress,current_Id);
+                        createRedCircle(new LatLng(latitudeList.get(id), longitudeList.get(id)), radiusList.get(id),id);
+                        Toast.makeText(MapsActivity.this, "Intersected", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                int count=circles.size()-1;
+                for (int id = 0; id <dndList.size(); id++)
+                {
+                    Log.i(Integer.toString(id),Integer.toString(flagArray.get(id)));
+                    if (!isIntersecting(new LatLng(latitudeList.get(current_Id), longitudeList.get(current_Id)), new LatLng(latitudeList.get(id), longitudeList.get(id)), progress + radiusList.get(id)) && id != current_Id){
+                        if (count>0){
+                            circles.get(count).remove();
+                            count--;
+                            flagArray.set(id,0);
+                            Log.i(Integer.toString(id),Integer.toString(flagArray.get(id)));
+                            Log.i("circles size",Integer.toString(circles.size()));
+                            Log.i("count",Integer.toString(count));
+
+                        }
+                    }
+                }
+                if (circles.size()>0) circles.get(0).setRadius(progress);
+               /* for (int id = 0; id < dndList.size(); id++) {
+                    if (!isIntersecting(new LatLng(latitudeList.get(current_Id), longitudeList.get(current_Id)), new LatLng(latitudeList.get(id), longitudeList.get(id)), progress + radiusList.get(id)) && id != current_Id)
+                       if(redCheck==1){ Toast.makeText(MapsActivity.this, "Nicee", Toast.LENGTH_SHORT).show();
+                    circle1.remove();
+                    createCircle(new LatLng(latitudeList.get(current_Id), longitudeList.get(current_Id)),progress);
+                       redCheck=0;
+
+                       }
+                }*/
+                if(circle!=null)circle.setRadius(progress);
             }
 
             @Override
@@ -221,8 +261,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         int check=0;
         for (int i = 0; i <dndList.size()-1 ; i++) {
             if (isIntersecting(latLng, new LatLng(latitudeList.get(i), longitudeList.get(i)), 60)) {
-                createRedCircle( new LatLng(latitudeList.get(i), longitudeList.get(i)),radiusList.get(i));
-                createRedCircle(new LatLng(latitudeList.get(dndList.size()-1),longitudeList.get(dndList.size()-1)),30);
+               // createRedCircle( new LatLng(latitudeList.get(i), longitudeList.get(i)),radiusList.get(i));
+                //createRedCircle(new LatLng(latitudeList.get(dndList.size()-1),longitudeList.get(dndList.size()-1)),30);
                 Toast.makeText(this, "Intersecting", Toast.LENGTH_SHORT).show();
                 check=1;
             }
@@ -312,13 +352,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }*/
     }
 
-    private void createRedCircle(LatLng latLng, float radius) {
-        Circle circle1 = mMap.addCircle(new CircleOptions()
+    private void createRedCircle(LatLng latLng, float radius,int id) {
+        if (flagArray.get(id)==0){
+            Circle circle1 = mMap.addCircle(new CircleOptions()
                 .center(latLng)
                 .radius(radius)
                 .strokeColor(getColor(R.color.red))
                 .strokeWidth(5)
                 .fillColor(getColor(R.color.redTransparent)));
+        circles.add(circle1);
+        flagArray.set(id,1);
+        }
     }
 
     private boolean isIntersecting(LatLng origin1, LatLng origin2, double distance) {
@@ -345,8 +389,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("current id", Integer.toString(i));
             }
         }
-        Log.i("dnd", String.valueOf(dndList.get(current_Id)));
-        Log.i("wifi", String.valueOf(wifiList.get(current_Id)));
+//        Log.i("dnd", String.valueOf(dndList.get(current_Id)));
+  //      Log.i("wifi", String.valueOf(wifiList.get(current_Id)));
         if (current_Id!=-1){
             if(dndList.get(current_Id)==1) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
             else if(dndList.get(current_Id)==0) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_off_black_24dp);
