@@ -20,6 +20,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <activity android:name=".earphone"></activity>
         <activity
             android:name=".Flip"
             android:label="@string/title_activity_flip"

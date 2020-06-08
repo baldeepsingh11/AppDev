@@ -41,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
         Intent locationIntent=new Intent(MainActivity.this,MapsActivity.class);
         startActivity(locationIntent);
     }
+    public void Earphone(View view){
+        Intent earphoneIntent= new Intent(MainActivity.this,earphone.class);
+        startActivity(earphoneIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
