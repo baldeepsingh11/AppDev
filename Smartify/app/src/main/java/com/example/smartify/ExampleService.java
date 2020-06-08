@@ -74,6 +74,7 @@ public class ExampleService extends Service {
     public static LocationManager locationManager;
     public static LocationListener locationListener;
     int dndFlag=0;
+    int wifiFlag=0;
     public static Location mLastLocation;
     public static Marker mCurrLocationMarker;
 
@@ -246,23 +247,29 @@ public class ExampleService extends Service {
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
                 mCurrLocationMarker = mMap.addMarker(markerOptions);
                 for (int i=0;i<dndList.size();i++){
-                    if(ExampleService.isInside(new LatLng(latitudeList.get(i),longitudeList.get(i)),new LatLng(location.getLatitude(),location.getLongitude()),radiusList.get(i))){
+                    if(ExampleService.isInside(new LatLng(latitudeList.get(i),longitudeList.get(i)),
+                            new LatLng(location.getLatitude(),location.getLongitude()),radiusList.get(i))){
                         if(dndFlag==0&&dndList.get(i)==1) {
                             mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_PRIORITY);
                             dndFlag=1;
                         }
-                       // if(wifiFlag==0&&current_Id!=-1&&dndList.get(i)==1) {
-
-                        //}
+                       if(wifiFlag==0&&wifiList.get(i)==1) {
+                              wifiManager.setWifiEnabled(true);
+                              wifiFlag=1;
+                       }
 
                     }
                     else {
                         if(dndFlag==1){mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
                             dndFlag=0;}
+                        if(wifiFlag==1&&wifiList.get(i)==1) {
+                            wifiManager.setWifiEnabled(false);
+                            wifiFlag=0;
+                        }
                     }
                 }
 
-                //move map camera
+
             }
 
             @Override

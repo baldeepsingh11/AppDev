@@ -6,10 +6,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.NotificationManager;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.location.Location;
@@ -52,24 +48,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     List<Marker> markers = new ArrayList<Marker>();
     Circle circle;
     SeekBar seekBar;
-    int flag=0;
     public FloatingActionButton fabDelete ;
     public FloatingActionButton fabDnd ;
-    int redCheck=0;
     public FloatingActionButton fabWifi;
-
+    LinearLayout linearLayout;
     public static int current_Id=-1;
     public List<Circle> circles=new ArrayList<>();
     public ArrayList<Integer> flagArray=new ArrayList<>();
-
-    //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
-    public void setOnMapLocation(Location location,String s){
-        if(location!=null) {
-            LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            ExampleService.mCurrLocationMarker=mMap.addMarker(new MarkerOptions().position(userLocation).title(s));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 18));
-        }
-        }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -81,6 +66,75 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
+    private void createRedCircle(LatLng latLng, float radius,int id) {
+        if (flagArray.get(id)==0){
+            Circle circle1 = mMap.addCircle(new CircleOptions()
+                    .center(latLng)
+                    .radius(radius)
+                    .strokeColor(getColor(R.color.red))
+                    .strokeWidth(5)
+                    .fillColor(getColor(R.color.redTransparent)));
+            circles.add(circle1);
+            flagArray.set(id,1);
+        }
+    }
+    private boolean isIntersecting(LatLng origin1, LatLng origin2, double distance) {
+        Location Lorigin = new Location("");
+        Lorigin.setLongitude(origin1.longitude);
+        Lorigin.setLatitude(origin1.latitude);
+        Location Lpoint = new Location("");
+        Lpoint.setLongitude(origin2.longitude);
+        Lpoint.setLatitude(origin2.latitude);
+        if(Lorigin.distanceTo(Lpoint)<distance)
+            return true;
+        else
+            return false;
+
+    }
+    public void createCircle(LatLng latLng,float radius){
+        circle = mMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(radius)
+                .strokeColor(getColor(R.color.colorPrimary))
+                .strokeWidth(5)
+                .fillColor(getColor(R.color.blueTransparent)));
+    }
+    public void setOnMapLocation(Location location,String s){
+        if(location!=null) {
+            LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            ExampleService.mCurrLocationMarker=mMap.addMarker(new MarkerOptions().position(userLocation).title(s));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 18));
+        }
+        }
+    private void delete(int id) {
+        markers.get(id).remove();
+        circle.remove();
+        markers.remove(id);
+        dndList.remove(id);
+        radiusList.remove(id);
+        wifiList.remove(id);
+        latitudeList.remove(id);
+        longitudeList.remove(id);
+        linearLayout.animate().alpha(0).setDuration(100);
+
+    }
+    private void addMarker(int i) {
+        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(ExampleService.latitudeList.get(i),ExampleService.longitudeList.get(i)))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))));
+    }
+    private void updateUI () {
+        if (current_Id!=-1){
+            if(dndList.get(current_Id)==1) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
+            else if(dndList.get(current_Id)==0) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_off_black_24dp);
+            if(wifiList.get(current_Id)==1) fabWifi.setImageResource(R.drawable.ic_signal_wifi_4_bar_black_24dp);
+            if(wifiList.get(current_Id)==0) fabWifi.setImageResource(R.drawable.ic_signal_wifi_off_black_24dp);
+        }
+        if(current_Id!=-1) seekBar.setProgress(radiusList.get(current_Id));
+    }
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +142,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         //SharedPreferences sharedPreferences=this.getSharedPreferences("com.example.smartify", Context.MODE_PRIVATE);
         seekBar=(SeekBar) findViewById(R.id.seekBar4);
+        linearLayout=(LinearLayout) findViewById(R.id.settings);
         //seekBar.setProgress(30);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -97,8 +152,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     flagArray.add(0);
                     if (isIntersecting(new LatLng(latitudeList.get(current_Id), longitudeList.get(current_Id)), new LatLng(latitudeList.get(id), longitudeList.get(id)), progress + radiusList.get(id)) && id != current_Id) {
                         if (circle != null) circle.remove();
-                            createRedCircle(new LatLng(latitudeList.get(current_Id),longitudeList.get(current_Id)),progress,current_Id);
-                        createRedCircle(new LatLng(latitudeList.get(id), longitudeList.get(id)), radiusList.get(id),id);
+                         //   createRedCircle(new LatLng(latitudeList.get(current_Id),longitudeList.get(current_Id)),progress,current_Id);
+                        //createRedCircle(new LatLng(latitudeList.get(id), longitudeList.get(id)), radiusList.get(id),id);
                         Toast.makeText(MapsActivity.this, "Intersected", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -189,25 +244,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void delete(int id) {
-        markers.get(id).remove();
-        circle.remove();
-        markers.remove(id);
-        dndList.remove(id);
-        radiusList.remove(id);
-        wifiList.remove(id);
-        latitudeList.remove(id);
-        longitudeList.remove(id);
-        LinearLayout linearLayout=(LinearLayout) findViewById(R.id.settings);
-        if (flag==1) {
-            linearLayout.animate().translationYBy(505).setDuration(100);
-            flag=0;}
-    }
 
-    private void addMarker(int i) {
-        markers.add(mMap.addMarker(new MarkerOptions().position(new LatLng(ExampleService.latitudeList.get(i),ExampleService.longitudeList.get(i)))
-        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))));
-    }
 
 
     @Override
@@ -229,29 +266,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
 
-
-
-
-        // Add a marker in Sydney, Australia, and move the camera.
-        /*LatLng chandigarh = new LatLng(30.7350626,76.6934887);
-        mMap.addMarker(new MarkerOptions().position(chandigarh).title("Marker in Chandigarh"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(chandigarh,18));
-        createCircle(chandigarh,30);*/
-
-
     }
-    public void createCircle(LatLng latLng,float radius){
-        circle = mMap.addCircle(new CircleOptions()
-                .center(latLng)
-                .radius(radius)
-                .strokeColor(getColor(R.color.colorPrimary))
-                .strokeWidth(5)
-                .fillColor(getColor(R.color.blueTransparent)));
-    }
-
 
     @Override
     public void onMapLongClick(LatLng latLng) {
+
         ExampleService.latitudeList.add(latLng.latitude);
         ExampleService.longitudeList.add(latLng.longitude);
         dndList.add(1);
@@ -273,8 +292,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.i("asd",Integer.toString(markers.size()));
         Log.i("asdf",Integer.toString(radiusList.size()));
 
-
-       // Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
+            current_Id = latitudeList.size() - 1;
+            updateUI();
+            linearLayout.animate().alpha(1).setDuration(100);
+            // Toast.makeText(this, "Location Saved!", Toast.LENGTH_SHORT).show();
         /*try{
             sharedPreferences.edit().putString("dndList",ObjectSerializer.serialize(dndList)).apply();
             Log.i("serialized",ObjectSerializer.serialize(dndList));
@@ -352,36 +373,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }*/
     }
 
-    private void createRedCircle(LatLng latLng, float radius,int id) {
-        if (flagArray.get(id)==0){
-            Circle circle1 = mMap.addCircle(new CircleOptions()
-                .center(latLng)
-                .radius(radius)
-                .strokeColor(getColor(R.color.red))
-                .strokeWidth(5)
-                .fillColor(getColor(R.color.redTransparent)));
-        circles.add(circle1);
-        flagArray.set(id,1);
-        }
-    }
-
-    private boolean isIntersecting(LatLng origin1, LatLng origin2, double distance) {
-        Location Lorigin = new Location("");
-        Lorigin.setLongitude(origin1.longitude);
-        Lorigin.setLatitude(origin1.latitude);
-        Location Lpoint = new Location("");
-        Lpoint.setLongitude(origin2.longitude);
-        Lpoint.setLatitude(origin2.latitude);
-        if(Lorigin.distanceTo(Lpoint)<distance)
-            return true;
-        else
-            return false;
-
-    }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
         LatLng pos=marker.getPosition();
+        current_Id = -1;
+        if(circle!=null)
+        {circle.remove();}
+        linearLayout.animate().alpha(0).setDuration(1);
+
 
         for (int i=0;i<markers.size();i++){
             if(latitudeList.get(i)==pos.latitude){
@@ -389,32 +389,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.i("current id", Integer.toString(i));
             }
         }
-//        Log.i("dnd", String.valueOf(dndList.get(current_Id)));
-  //      Log.i("wifi", String.valueOf(wifiList.get(current_Id)));
-        if (current_Id!=-1){
-            if(dndList.get(current_Id)==1) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
-            else if(dndList.get(current_Id)==0) fabDnd.setImageResource(R.drawable.ic_do_not_disturb_off_black_24dp);
-            if(wifiList.get(current_Id)==1) fabWifi.setImageResource(R.drawable.ic_signal_wifi_4_bar_black_24dp);
-            if(wifiList.get(current_Id)==0) fabWifi.setImageResource(R.drawable.ic_signal_wifi_off_black_24dp);
+       /*Log.i("dnd", String.valueOf(dndList.get(current_Id)));
+       Log.i("wifi", String.valueOf(wifiList.get(current_Id)));*/
+
+
+        if(current_Id!=-1) {
+            createCircle(marker.getPosition(), radiusList.get(current_Id));
+            //Log.i("pos", "String.valueOf(pos.latitude)");
+            linearLayout.animate().alpha(1).setDuration(100);
+            updateUI();
         }
-        if(current_Id!=-1) seekBar.setProgress(radiusList.get(current_Id));
-        if(circle!=null){circle.remove();}
-        if(current_Id!=-1) createCircle(marker.getPosition(),radiusList.get(current_Id));
-        //Log.i("pos", "String.valueOf(pos.latitude)");
-        LinearLayout linearLayout=(LinearLayout) findViewById(R.id.settings);
-        if (flag==0) {
-            linearLayout.animate().translationYBy(-505).setDuration(100);
-            flag=1;
-        }
+
+
         return false;
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        LinearLayout linearLayout=(LinearLayout) findViewById(R.id.settings);
-        if (flag==1) {
-            linearLayout.animate().translationYBy(505).setDuration(100);
-            flag=0;
-        }
+
+            Log.i("msg","mapClicked");
+            linearLayout.animate().alpha(0).setDuration(100);
+
+
     }
 }
