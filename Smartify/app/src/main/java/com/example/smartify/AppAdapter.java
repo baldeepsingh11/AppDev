@@ -46,6 +46,7 @@ public class AppAdapter extends BaseAdapter {
 
             listViewHolder.textInListView = (TextView)convertView.findViewById(R.id.list_app_name);
             listViewHolder.imageInListView = (ImageView)convertView.findViewById(R.id.app_icon);
+
             //listViewHolder.imageInListView = (ImageView)convertView.findViewById(R.id.imageView2);
             convertView.setTag(listViewHolder);
         }else{
@@ -53,7 +54,7 @@ public class AppAdapter extends BaseAdapter {
         }
         listViewHolder.textInListView.setText(listStorage.get(position).getName());
         listViewHolder.imageInListView.setImageDrawable(listStorage.get(position).getIcon());
-//        listViewHolder.imageView.setImageDrawable(listStorage.get(position).getTick());
+        //listViewHolder.imageView.setImageDrawable(listStorage.get(position).getTick());
 
 
         return convertView;
@@ -63,5 +64,5 @@ public class AppAdapter extends BaseAdapter {
 
         TextView textInListView;
         ImageView imageInListView;
-        ImageView imageView;
+       // ImageView imageView;
     }}

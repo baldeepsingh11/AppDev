@@ -5,13 +5,13 @@ public class AppList {
 
     private String name;
     Drawable icon;
-    Drawable tick;
+   // Drawable tick;
 
 
     public AppList(String name, Drawable icon, Drawable tick) {
         this.name = name;
         this.icon = icon;
-        this.tick = tick;
+        //this.tick = tick;
     }
 
     public String getName() {
@@ -22,5 +22,5 @@ public class AppList {
         return icon;
     }
 
-    public Drawable getTick(){return tick; }
+    //public Drawable getTick(){return tick; }
 }

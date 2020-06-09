@@ -6,8 +6,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -77,6 +79,40 @@ public class ExampleService extends Service {
     int wifiFlag=0;
     public static Location mLastLocation;
     public static Marker mCurrLocationMarker;
+    class HeadsetIntentReceiver extends BroadcastReceiver {
+        private String TAG = "HeadSet";
+
+        public HeadsetIntentReceiver() {
+            Log.d(TAG, "Created");
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
+                int state = intent.getIntExtra("state", -1);
+                switch(state) {
+                    case(0):
+                        Log.d(TAG, "Headset unplugged");
+                        break;
+                    case(1):
+                        Log.d(TAG, "Headset plugged");
+                        //  Intent intent1 = new Intent(context,MainActivity2.class);
+                        Intent intent1 = getPackageManager().getLaunchIntentForPackage("com.google.android.youtube");
+                        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        if (intent1 != null) {
+                            ExampleService.this.startActivity(intent1);//null pointer check in case package name was not found
+                        }
+
+                        // context.startActivity(intent1);
+                        break;
+                    default:
+                        Log.d(TAG, "Error");
+                }
+            }
+        }
+
+
+    }
 
     public static boolean isInside(LatLng origin, LatLng point, double radius)
     {
@@ -227,6 +263,9 @@ public class ExampleService extends Service {
 
     @Override
     public void onCreate() {
+        IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        HeadsetIntentReceiver receiver = new HeadsetIntentReceiver();
+        registerReceiver( receiver, receiverFilter );
         Log.i("info","Service Started");
         locationManager=(LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationListener=new LocationListener() {

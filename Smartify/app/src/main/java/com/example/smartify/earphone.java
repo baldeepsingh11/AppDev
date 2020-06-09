@@ -30,8 +30,6 @@ public class earphone extends AppCompatActivity {
         Intent serviceIntent = new Intent(this , ExampleService.class);
         startService(serviceIntent);
         textView = findViewById(R.id.text);
-        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-        startActivity(intent);
 
         ListView userInstalledApps = (ListView)findViewById(R.id.installed_app_list);
 
