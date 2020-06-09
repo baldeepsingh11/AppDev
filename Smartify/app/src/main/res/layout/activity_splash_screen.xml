@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".SplashScreen">
 
     <TextView
@@ -14,7 +15,8 @@
         android:layout_marginTop="353dp"
         android:layout_marginEnd="170dp"
         android:layout_marginBottom="359dp"
-        android:text="Welcome Screen"
+        android:text="SmartifY"
+        android:textColor="#FFFFFF"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

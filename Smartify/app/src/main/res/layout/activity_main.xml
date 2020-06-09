@@ -86,7 +86,7 @@
             android:layout_marginLeft="30dp"
             android:background="@drawable/bg_auto_rotate"
             android:gravity="center_vertical"
-            android:onClick="autoRotate"
+            android:onClick="Rotate"
             app:layout_column="0"
             app:layout_row="1" />
 

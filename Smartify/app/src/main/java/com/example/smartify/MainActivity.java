@@ -45,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
         Intent earphoneIntent= new Intent(MainActivity.this,earphone.class);
         startActivity(earphoneIntent);
     }
+    public void Rotate(View view) {
+        Intent autoIntent = new Intent(MainActivity.this, autoRotate.class);
+        startActivity(autoIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
