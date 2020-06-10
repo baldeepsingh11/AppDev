@@ -266,17 +266,11 @@ public class Timer_Service extends Service {
             int count = (int) db.getAppsCount();
             for (int i = 1; i <= count; ++i) {
                 if (printForegroundTask().equalsIgnoreCase(db.get_app_PKG(i))) {
-                    setAutoOrientationEnabled(this,true);
+                   Log.i("msg","app opened");
                 }
             }
         }
     }
-
-    public static void setAutoOrientationEnabled(Context context, boolean enabled)
-    {
-        Settings.System.putInt( context.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
-    }
-
 
 
     private void lock_State() throws Exception {

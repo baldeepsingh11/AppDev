@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
     private Context context;
     private PackageManager packageManager;
     private ArrayList<Boolean> checkList = new ArrayList<Boolean>();
+    static ArrayList<Integer> selectedapp = new ArrayList<>();
 
     public ApplicationAdapter(Context context, int textViewResourceId,
                               List<ApplicationInfo> appsList) {
@@ -80,7 +82,23 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
     CompoundButton.OnCheckedChangeListener mListener = new CompoundButton.OnCheckedChangeListener() {
 
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            checkList.set((Integer)buttonView.getTag(),isChecked); // get the tag so we know the row and store the status
+            checkList.set((Integer)buttonView.getTag(),isChecked);
+            // get the tag so we know the row and store the status
+            Log.i("msg",String.valueOf((Integer)buttonView.getTag()));
+            if (!selectedapp.contains((Integer)buttonView.getTag()))
+            { selectedapp.add((Integer)buttonView.getTag());}
+            else {
+                selectedapp.remove((Integer)buttonView.getTag());
+            }
+
+            for( Integer strDay : selectedapp ){
+               // Log.i("msg", String.valueOf(strDay));
+
+                Log.i("msg",autoRotate.selectedappsstring.get(strDay));
+            }
+
+
         }
     };
+
 }

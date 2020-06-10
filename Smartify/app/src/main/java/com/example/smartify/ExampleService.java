@@ -1,12 +1,16 @@
 package com.example.smartify;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -44,6 +48,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 import static com.example.smartify.MainActivity.accelerometerSensor;
@@ -68,6 +76,7 @@ public class ExampleService extends Service {
     private Looper serviceLooper;
     private ServiceHandler serviceHandler;
     static boolean flip;
+    private static Timer timer = new Timer();
     int fFlag=0;
     static int flipSettings=2;
     int innerflag =0;
@@ -223,6 +232,7 @@ public class ExampleService extends Service {
                                            //here you can have your logic to set text to edittext
                                        }
 
+                                       @SuppressLint("WrongConstant")
                                        public void onFinish() {
                                            Log.i("finish","true");
                                            if(innerflag==0) {
@@ -263,6 +273,7 @@ public class ExampleService extends Service {
 
     @Override
     public void onCreate() {
+        startService();
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         HeadsetIntentReceiver receiver = new HeadsetIntentReceiver();
         registerReceiver( receiver, receiverFilter );
@@ -397,5 +408,68 @@ public class ExampleService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void startService()
+    {
+        timer.scheduleAtFixedRate(new mainTask(), 0, 500);
+    }
+
+    private class mainTask extends TimerTask
+    {
+        public void run()
+        {
+            handleMessage();
+        }
+    }
+
+    public void handleMessage() {
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(5);
+        if (Build.VERSION.SDK_INT <= 20) {
+            if (task.size() > 0) {
+                ComponentName componentInfo = task.get(0).topActivity;
+                // for (int i = 0; pakageName != null && i < pakageName.size(); i++) {
+                //    if (componentInfo.getPackageName().equals(pakageName.get(i))) {
+                //       currentApp = pakageName.get(i);
+                //     return true;
+                Log.i("msg",componentInfo.getPackageName());
+            }
+        } else {
+            String mpackageName = manager.getRunningAppProcesses().get(0).processName;
+            UsageStatsManager usage = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
+            long time = System.currentTimeMillis();
+            List<UsageStats> stats = usage.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, 0, time);
+            if (stats != null) {
+                SortedMap<Long, UsageStats> runningTask = new TreeMap<Long, UsageStats>();
+                for (UsageStats usageStats : stats) {
+                    runningTask.put(usageStats.getLastTimeUsed(), usageStats);
+                }
+                if (runningTask.isEmpty()) {
+                    Log.d("TAG", "isEmpty Yes");
+                    mpackageName = "";
+                } else {
+                    mpackageName = runningTask.get(runningTask.lastKey()).getPackageName();
+                    Log.d("TAG", "isEmpty No : " + mpackageName);
+
+                    for( Integer strDay : ApplicationAdapter.selectedapp){
+                        int flag =1;
+                        if(autoRotate.selectedappsstring.get(strDay).equals( mpackageName))
+                        {
+                            Log.i("MATCHED","mach");
+
+
+                        } else{ Log.i("MATCHED","notmach");}
+                    }
+
+                }
+
+
+            }
+
+
+
+
+        }
     }
 }

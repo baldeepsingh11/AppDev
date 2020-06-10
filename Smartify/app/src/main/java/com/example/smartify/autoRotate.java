@@ -8,6 +8,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -20,6 +21,7 @@ public class autoRotate extends ListActivity {
     private PackageManager packageManager = null;
     private List<ApplicationInfo> applist = null;
     private ApplicationAdapter listadaptor = null;
+    static ArrayList<String> selectedappsstring = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,12 +31,14 @@ public class autoRotate extends ListActivity {
         packageManager = getPackageManager();
 
         new LoadApplications().execute();
+
+
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-
+ Log.i("msg","ff");
         ApplicationInfo app = applist.get(position);
         try {
             Intent intent = packageManager
@@ -52,17 +56,26 @@ public class autoRotate extends ListActivity {
         }
     }
 
+
+
     private List<ApplicationInfo> checkForLaunchIntent(List<ApplicationInfo> list) {
         ArrayList<ApplicationInfo> applist = new ArrayList<ApplicationInfo>();
         for (ApplicationInfo info : list) {
             try {
                 if (null != packageManager.getLaunchIntentForPackage(info.packageName)) {
                     applist.add(info);
+                    selectedappsstring.add(info.packageName);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        for( String  strDay : selectedappsstring ){
+            Log.i("msg", strDay);
+        }
+
+
 
         return applist;
     }

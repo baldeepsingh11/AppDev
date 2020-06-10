@@ -58,7 +58,7 @@ public class MyService extends Service
     {
         public void run()
         {
-            toastHandler.sendEmptyMessage(0);
+           handleMessage();
         }
     }
 
@@ -68,11 +68,8 @@ public class MyService extends Service
         Toast.makeText(this, "Service Stopped ...", Toast.LENGTH_SHORT).show();
     }
 
-    private  final Handler toastHandler = new Handler()
-    {
-        @SuppressLint({"WrongConstant", "HandlerLeak"})
-        @Override
-        public void handleMessage(Message msg) {
+
+        public void handleMessage() {
             ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
             List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(5);
             if (Build.VERSION.SDK_INT <= 20) {
@@ -105,4 +102,4 @@ public class MyService extends Service
 
 
             }
-        }};}
+        }}
