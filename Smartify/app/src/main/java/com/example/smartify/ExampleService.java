@@ -43,6 +43,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -515,10 +516,11 @@ public class ExampleService extends Service {
                 } else {
                     mpackageName = runningTask.get(runningTask.lastKey()).getPackageName();
                     count=0;
+                    Log.d("debug1",mpackageName);
                     for( Integer strDay : ApplicationAdapter.selectedapp){
 
                         if(autoRotate.selectedappsstring.get(strDay).equals( mpackageName))
-                        {
+                        {   Log.d("debug2","matched");
                             if(!currentApp.equals(mpackageName)&&rotateFlag==0){
                                 Log.i("auto rotate", "on");
                                 currentApp=mpackageName;
@@ -532,6 +534,7 @@ public class ExampleService extends Service {
                         }
                         else{
                             count++;
+                            Log.d("debug3","unmatched");
                         }
                         if(rotateFlag==1){
                             if(count==ApplicationAdapter.selectedapp.size()){ Log.i("Auto rotate", "Off");

@@ -85,11 +85,13 @@ public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
             checkList.set((Integer)buttonView.getTag(),isChecked);
             // get the tag so we know the row and store the status
             Log.i("msg",String.valueOf((Integer)buttonView.getTag()));
+
             if (!selectedapp.contains((Integer)buttonView.getTag()))
             { selectedapp.add((Integer)buttonView.getTag());}
             else {
                 selectedapp.remove((Integer)buttonView.getTag());
             }
+            Log.i("msg", "onCheckedChanged: " + autoRotate.selectedappsstring);
 
             for( Integer strDay : selectedapp ){
                // Log.i("msg", String.valueOf(strDay));
