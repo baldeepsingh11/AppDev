@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         startActivity(intent);
 
+        Intent intent1 = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+        startActivity(intent1);
+
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
             new AlertDialog.Builder(MainActivity.this)

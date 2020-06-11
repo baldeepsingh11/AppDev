@@ -14,7 +14,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -35,6 +37,11 @@ import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -68,6 +75,9 @@ public class ExampleService extends Service {
     public static ArrayList<Double> longitudeList= new ArrayList<Double>();
     public static ArrayList<Integer> wifiList= new ArrayList<Integer>();
     public static ArrayList<Integer> radiusList= new ArrayList<Integer>();
+    WindowManager wm;
+    LinearLayout ll;
+    private View overlay;
 
     float z= -20;
     float pValue ;
@@ -88,6 +98,10 @@ public class ExampleService extends Service {
     int wifiFlag=0;
     public static Location mLastLocation;
     public static Marker mCurrLocationMarker;
+    WindowManager.LayoutParams orientationLayout;
+    int rotateFlag =0;
+    String currentApp="";
+    int count =0;
     class HeadsetIntentReceiver extends BroadcastReceiver {
         private String TAG = "HeadSet";
 
@@ -273,6 +287,39 @@ public class ExampleService extends Service {
 
     @Override
     public void onCreate() {
+/*
+        ImageView openapp = new ImageView(this);
+        openapp.setImageResource(R.mipmap.ic_launcher_round);
+        ViewGroup.LayoutParams butnparams = new ViewGroup.LayoutParams(
+                50,50);
+        openapp.setLayoutParams(butnparams);
+
+        wm = (WindowManager) getSystemService(Service.WINDOW_SERVICE);
+
+        LinearLayout orientationChanger = new LinearLayout(getApplicationContext());
+        orientationChanger.setClickable(false);
+        orientationChanger.setFocusable(false);
+        orientationChanger.setFocusableInTouchMode(false);
+        orientationChanger.setLongClickable(false);
+
+        orientationLayout = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.RGBA_8888);
+
+        wm.addView(orientationChanger, orientationLayout);
+        orientationChanger.setVisibility(View.GONE);
+
+        orientationLayout.screenOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR;
+        wm.updateViewLayout(orientationChanger, orientationLayout);
+        orientationChanger.setVisibility(View.VISIBLE);
+*/
+
+
+
+
+
         startService();
         IntentFilter receiverFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         HeadsetIntentReceiver receiver = new HeadsetIntentReceiver();
@@ -402,7 +449,10 @@ public class ExampleService extends Service {
     public void onDestroy() {
         sensorManager.unregisterListener(accelerometerListener);
         super.onDestroy();
+        stopSelf();
     }
+
+
 
     @Nullable
     @Override
@@ -419,12 +469,26 @@ public class ExampleService extends Service {
     {
         public void run()
         {
-            handleMessage();
+            toastHandler.sendEmptyMessage(0);;
         }
     }
 
-    public void handleMessage() {
-        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+    private  final Handler toastHandler = new Handler()
+    {
+        @SuppressLint({"WrongConstant", "HandlerLeak"})
+        @Override
+    public void handleMessage(Message msg) {
+
+        autoRotate.ScreenOrientationEnforcer screenOrientationEnforcer
+                = new autoRotate.ScreenOrientationEnforcer(getApplicationContext());
+
+            autoRotate.ScreenOrientationEnforcer1 screenOrientationEnforcer1
+                    = new autoRotate.ScreenOrientationEnforcer1(getApplicationContext());
+
+
+
+            ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(5);
         if (Build.VERSION.SDK_INT <= 20) {
             if (task.size() > 0) {
@@ -433,6 +497,7 @@ public class ExampleService extends Service {
                 //    if (componentInfo.getPackageName().equals(pakageName.get(i))) {
                 //       currentApp = pakageName.get(i);
                 //     return true;
+
                 Log.i("msg",componentInfo.getPackageName());
             }
         } else {
@@ -446,21 +511,35 @@ public class ExampleService extends Service {
                     runningTask.put(usageStats.getLastTimeUsed(), usageStats);
                 }
                 if (runningTask.isEmpty()) {
-                    Log.d("TAG", "isEmpty Yes");
                     mpackageName = "";
                 } else {
                     mpackageName = runningTask.get(runningTask.lastKey()).getPackageName();
-                    Log.d("TAG", "isEmpty No : " + mpackageName);
-
+                    count=0;
                     for( Integer strDay : ApplicationAdapter.selectedapp){
-                        int flag =1;
+
                         if(autoRotate.selectedappsstring.get(strDay).equals( mpackageName))
                         {
-                            Log.i("MATCHED","mach");
+                            if(!currentApp.equals(mpackageName)&&rotateFlag==0){
+                                Log.i("auto rotate", "on");
+                                currentApp=mpackageName;
+                                rotateFlag=1;
 
+                                screenOrientationEnforcer.start();
+                                Log.i("package name",mpackageName);
+                            }
+                            break;
 
-                        } else{ Log.i("MATCHED","notmach");}
+                        }
+                        else{
+                            count++;
+                        }
+                        if(rotateFlag==1){
+                            if(count==ApplicationAdapter.selectedapp.size()){ Log.i("Auto rotate", "Off");
+                                screenOrientationEnforcer1.start();
+                                rotateFlag=0;}
+                        }
                     }
+
 
                 }
 
@@ -469,7 +548,6 @@ public class ExampleService extends Service {
 
 
 
-
         }
-    }
+    }};
 }
