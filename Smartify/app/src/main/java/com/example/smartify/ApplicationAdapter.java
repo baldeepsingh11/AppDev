@@ -16,7 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.smartify.R;
 
 public class ApplicationAdapter extends ArrayAdapter<ApplicationInfo> {
     private List<ApplicationInfo> appsList = null;

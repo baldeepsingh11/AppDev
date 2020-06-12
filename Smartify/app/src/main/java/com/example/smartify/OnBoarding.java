@@ -2,7 +2,9 @@ package com.example.smartify;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
+import static com.example.smartify.MainActivity.mNotificationManager;
+
 public class OnBoarding extends AppCompatActivity {
     private ViewPager mSlideViewPager;
     private LinearLayout mDotLayout;
@@ -18,6 +22,7 @@ public class OnBoarding extends AppCompatActivity {
     private SliderAdapter sliderAdapter;
     Button mPrevButton;
     Button mNextButton;
+    Button permission;
     TextView[] mDots;
     int mCurrentPage;
 
@@ -30,6 +35,7 @@ public class OnBoarding extends AppCompatActivity {
         mDotLayout=(LinearLayout) findViewById(R.id.dots);
         mPrevButton=findViewById(R.id.button);
         mNextButton=findViewById(R.id.button2);
+        permission=findViewById(R.id.button3);
         sliderAdapter=new SliderAdapter(OnBoarding.this);
         mSlideViewPager.setAdapter(sliderAdapter);
         addDotsIndicator(0);
@@ -56,6 +62,7 @@ public class OnBoarding extends AppCompatActivity {
                 }
             }
         });
+
 
 
     }
@@ -85,19 +92,41 @@ public class OnBoarding extends AppCompatActivity {
             addDotsIndicator(position);
             mCurrentPage=position;
             if(position==0){
+                permission.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (!mNotificationManager.isNotificationPolicyAccessGranted())  { Log.i("button", "onClick:clicked ");
+                        Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                        startActivity(intent);}
+                    }
+                });
                 mNextButton.setEnabled(true);
                 mPrevButton.setEnabled(false);
                 mPrevButton.setVisibility(View.INVISIBLE);
                 mNextButton.setText("Next");
                 mPrevButton.setText("");
             }else if(position==mDots.length-1){
+                permission.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        startActivity(intent);
+                    }
+                });
                 mNextButton.setEnabled(true);
                 mPrevButton.setEnabled(true);
                 mPrevButton.setVisibility(View.VISIBLE);
                 mNextButton.setText("Finish");
                 mPrevButton.setText("Back");
 
-            }else {
+            }else if(position==1){
+                permission.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                        startActivity(intent);
+                    }
+                });
                 mNextButton.setEnabled(true);
                 mPrevButton.setEnabled(true);
                 mPrevButton.setVisibility(View.VISIBLE);

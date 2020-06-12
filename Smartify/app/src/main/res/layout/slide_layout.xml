@@ -14,13 +14,12 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="27dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="120dp"
         android:layout_marginEnd="28dp"
-        app:layout_constraintBottom_toTopOf="@+id/slide_heading"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.525"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.45"
         app:srcCompat="@drawable/food_icon" />
 
     <TextView
@@ -31,15 +30,15 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="473dp"
+        android:layout_marginBottom="224dp"
         android:textAlignment="center"
         android:textColor="@color/colorWhite"
         android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/slide_desc"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slide_image" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/slide_desc"
@@ -47,8 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="false"
         android:layout_alignParentBottom="false"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginTop="145dp"
+        android:layout_marginBottom="72dp"
         android:padding="10dp"
         android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. "
         android:textAlignment="center"
@@ -57,5 +56,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/slide_heading" />
+        app:layout_constraintTop_toBottomOf="@+id/slide_image" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
