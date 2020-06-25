@@ -1,6 +1,7 @@
 package com.example.whatsappclone.mode;
 
-public class Chat {
+public class
+Chat {
     private String sender;
     private String receiver;
     private String message;
