@@ -25,20 +25,9 @@ public class MainActivity extends AppCompatActivity {
        // CalendarManager manager = new CalendarManager(LocalDate.now(), State.MONTH, LocalDate.now(), LocalDate.now().plusYears(1));
 
         CollapseCalendarView calendarView = (CollapseCalendarView) findViewById(R.id.calendar);
-        //calendarView.init(manager);
-
-// Set an action when any event is clicked.
-        WeekView.EventClickListener mEventClickListener = null;
-
-        mWeekView.setOnEventClickListener(mEventClickListener);
-
-// The week view has infinite scrolling horizontally. We have to provide the events of a
-// month every time the month changes on the week view.
 
 
-// Set long press listener for events.
-        WeekView.EventLongPressListener mEventLongPressListener = null;
-        mWeekView.setEventLongPressListener(mEventLongPressListener);
+
 
 
     }

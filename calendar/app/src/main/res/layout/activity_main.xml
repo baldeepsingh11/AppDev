@@ -8,32 +8,15 @@
 
     <com.wefika.calendar.CollapseCalendarView
         android:id="@+id/calendar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="412dp"
+        android:layout_height="731dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
 
-    <com.alamkanak.weekview.WeekView
-        android:id="@+id/weekView"
-        android:layout_width="423dp"
-        android:layout_height="612dp"
-        android:layout_marginStart="3dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginTop="29dp"
-        app:columnGap="8dp"
-        app:dayBackgroundColor="#05000000"
-        app:eventTextColor="@android:color/white"
-        app:headerColumnBackground="#ffffffff"
-        app:headerColumnPadding="8dp"
-        app:headerColumnTextColor="#8f000000"
-        app:headerRowBackgroundColor="#ffefefef"
-        app:headerRowPadding="12dp"
-        app:hourHeight="60dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/calendar"
-        app:noOfVisibleDays="3"
-        app:textSize="12sp"
-        app:todayBackgroundColor="#1848adff" />
+        <androidx.viewpager.widget.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.wefika.calendar.CollapseCalendarView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
