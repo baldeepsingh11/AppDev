@@ -2,6 +2,7 @@ package com.ibc.android.demo.appslist.calendar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.alamkanak.weekview.MonthLoader;
@@ -22,10 +23,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       // CalendarManager manager = new CalendarManager(LocalDate.now(), State.MONTH, LocalDate.now(), LocalDate.now().plusYears(1));
+        CalendarManager manager = new CalendarManager(org.joda.time.LocalDate.now(), State.MONTH, org.joda.time.LocalDate.now(), org.joda.time.LocalDate.now().plusYears(1));
 
         CollapseCalendarView calendarView = (CollapseCalendarView) findViewById(R.id.calendar);
-
+        calendarView.init(org.joda.time.LocalDate.now(),org.joda.time.LocalDate.now(),org.joda.time.LocalDate.now().plusYears(1));
+        startActivity(new Intent(MainActivity.this, Day_activity.class));
 
 
 
