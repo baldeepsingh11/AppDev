@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Getoffyourphone-master.iml" filepath="$PROJECT_DIR$/Getoffyourphone-master.iml" group="Getoffyourphone-master" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="Getoffyourphone-master/app" />
+      <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" group="Getoffyourphone-master/library" />
+      <module fileurl="file://$PROJECT_DIR$/swipe-selector/swipe-selector.iml" filepath="$PROJECT_DIR$/swipe-selector/swipe-selector.iml" group="Getoffyourphone-master/swipe-selector" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="about_background_color">#303030</color>
+    <color name="about_description_text_color">#C1C1C1</color>
+    <color name="about_item_text_color">#FFFFFF</color>
+    <color name="about_separator_color">#494949</color>
+    <color name="about_text_color">#C1C1C1</color>
+    <style name="MaterialTheme.ActionBar.DayNight" parent="MaterialTheme.ActionBar"/>
+    <style name="MaterialTheme.ActionBar.TranslucentStatus.DayNight" parent="MaterialTheme.ActionBar.TranslucentStatus"/>
+    <style name="MaterialTheme.DarkToolbar.ActionBar.DayNight" parent="MaterialTheme.ActionBar"/>
+    <style name="MaterialTheme.DarkToolbar.ActionBar.TranslucentStatus.DayNight" parent="MaterialTheme.ActionBar.TranslucentStatus"/>
+    <style name="MaterialTheme.DarkToolbar.DayNight" parent="MaterialTheme"/>
+    <style name="MaterialTheme.DarkToolbar.TranslucentStatus.DayNight" parent="MaterialTheme.TranslucentStatus"/>
+    <style name="MaterialTheme.DayNight" parent="MaterialTheme"/>
+    <style name="MaterialTheme.TranslucentStatus.DayNight" parent="MaterialTheme.TranslucentStatus"/>
+    <style name="Theme.AppCompat.DayNight" parent="Theme.AppCompat"/>
+    <style name="Theme.AppCompat.DayNight.DarkActionBar" parent="Theme.AppCompat"/>
+    <style name="Theme.AppCompat.DayNight.Dialog" parent="Theme.AppCompat.Dialog"/>
+    <style name="Theme.AppCompat.DayNight.Dialog.Alert" parent="Theme.AppCompat.Dialog.Alert"/>
+    <style name="Theme.AppCompat.DayNight.Dialog.MinWidth" parent="Theme.AppCompat.Dialog.MinWidth"/>
+    <style name="Theme.AppCompat.DayNight.DialogWhenLarge" parent="Theme.AppCompat.DialogWhenLarge"/>
+    <style name="Theme.AppCompat.DayNight.NoActionBar" parent="Theme.AppCompat.NoActionBar"/>
+    <style name="ThemeOverlay.AppCompat.DayNight" parent="ThemeOverlay.AppCompat.Dark"/>
+</resources>

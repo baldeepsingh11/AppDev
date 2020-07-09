@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="FDroid_element">Conseguir en F-Droid</string>
+    <string name="Hours_v2"> Horas</string>
+    <string msgid="7903180715631665059" name="abc_action_bar_home_description">"Ir a inicio"</string>
+    <string msgid="6794660482873516081" name="abc_action_bar_up_description">"Desplazarse hacia arriba"</string>
+    <string msgid="1155814932213556626" name="abc_action_menu_overflow_description">"Más opciones"</string>
+    <string msgid="2571498368472823490" name="abc_action_mode_done">"Listo"</string>
+    <string msgid="3732416590524162402" name="abc_activity_chooser_view_see_all">"Ver todo"</string>
+    <string msgid="1798588241954930982" name="abc_activitychooserview_choose_application">"Seleccionar una aplicación"</string>
+    <string msgid="3403923230105792483" name="abc_capital_off">"DESACTIVADO"</string>
+    <string msgid="7831734969929204599" name="abc_capital_on">"ACTIVADO"</string>
+    <string msgid="5725160506500770567" name="abc_menu_alt_shortcut_label">"Alt +"</string>
+    <string msgid="944415252197684443" name="abc_menu_ctrl_shortcut_label">"Ctrl +"</string>
+    <string msgid="129742188101734366" name="abc_menu_delete_shortcut_label">"Suprimir"</string>
+    <string msgid="6840127756824236027" name="abc_menu_enter_shortcut_label">"Intro"</string>
+    <string msgid="4974283687810130415" name="abc_menu_function_shortcut_label">"Función +"</string>
+    <string msgid="8046416353848716905" name="abc_menu_meta_shortcut_label">"Meta +"</string>
+    <string msgid="3271697756921353410" name="abc_menu_shift_shortcut_label">"Mayús +"</string>
+    <string msgid="2304645930658438191" name="abc_menu_space_shortcut_label">"Espacio"</string>
+    <string msgid="8327365089695024394" name="abc_menu_sym_shortcut_label">"Sym +"</string>
+    <string msgid="3570106412128999382" name="abc_prepend_shortcut_label">"Menú +"</string>
+    <string msgid="940844115270746197" name="abc_search_hint">"Buscar…"</string>
+    <string msgid="1769270744562318534" name="abc_searchview_description_clear">"Borrar consulta"</string>
+    <string msgid="908784302972860853" name="abc_searchview_description_query">"Consulta de búsqueda"</string>
+    <string msgid="5466662225065974044" name="abc_searchview_description_search">"Buscar"</string>
+    <string msgid="8203855622131699655" name="abc_searchview_description_submit">"Enviar consulta"</string>
+    <string msgid="3478748990613108725" name="abc_searchview_description_voice">"Búsqueda por voz"</string>
+    <string msgid="2650565705514630347" name="abc_shareactionprovider_share_with">"Compartir con"</string>
+    <string msgid="9009661856846212431" name="abc_shareactionprovider_share_with_application">"Compartir con <ns1:g id="APPLICATION_NAME">%s</ns1:g>"</string>
+    <string msgid="6389460216547290468" name="abc_toolbar_collapse_description">"Ocultar"</string>
+    <string name="about_contact_us">Contáctenos</string>
+    <string name="about_facebook">Síganos en Facebook</string>
+    <string name="about_github">Haga una copia en GitHub</string>
+    <string name="about_instagram">Síganos en Instagram</string>
+    <string name="about_play_store">Puntúanos en Play Store</string>
+    <string name="about_twitter">Síganos en Twitter</string>
+    <string name="about_website">Visite nuestro sitio web</string>
+    <string name="about_youtube">Mire nuestros vídeos en Youtube</string>
+    <string name="app_name">Get Off Your Phone</string>
+    <string name="app_open1">Estado: </string>
+    <string name="app_open2">Estado seleccionado: </string>
+    <string name="app_selector_apply">Aplicar</string>
+    <string name="app_selector_cancel">Cancelar</string>
+    <string name="app_selector_clear">Borrar</string>
+    <string name="app_selector_title">Seleccionar apps: </string>
+    <string name="battery_dialog_message">RECOMIENDO DESACTIVAR ESTO.\nAndroid va a cerrar la app despues de un tiempo si esto esta activado!</string>
+    <string name="battery_dialog_title">Desactivar optimización de batería?</string>
+    <string name="cafebar_error">Por favor seleccione el tiempo de bloqueo deseado</string>
+    <string name="cafebar_error2">Seleccione al menos 1 app para bloquear</string>
+    <string name="cafebar_error3">El contador ya esta corriendo</string>
+    <string name="cafebar_error4">Selecciones limpiadas</string>
+    <string name="cafebar_error5">Apps ya seleccionadas, espere hasta que el contador termine</string>
+    <string name="changes">
+    v6.1r (1.3.2019//1:55:24)\n\n[Fixed]\n- Midnight Timer increasing to 20+ hours by itself (Please leave a feedback whether this fix is working for you or not)\n- Fixed notifications selected time text (From 2 mins/Hours to Hours only or Minutes only)\n- Cleaned some unused strings\n\n[New]\n- Chinese translation by @Waining\n- Spanish Translation by @Makmm \n\n[Updated]\n- Dependencies and Libraries, supporting Android Pie SDK 28\n\nMore updates and feature requests coming soon! Happy New year 💖\n\n_______\n\nv6.0r (1.10.2018//16:28:08)\n\n[Fixed]\n- Critical Bug related to Timer-Done notification\n- Increased timeout of app close after lock-down start ( 2.5 seconds )\n- Notifications text\n- Usage stats Format + Algorithm\n\n[New]\n- App Icon ( Thanks to twingenious)\n- System-wide lockdown (Mobile Data lock needs ROOT)\n- Vibration pattern upon open of locked app\n\n[Removed]\n- Previous App Open Counter &amp; different lock screens\n\n_______\n\nv5.9r (18.9.2018//00:05:37)\n\n[NEW]\n\n- Daily usage per app (Press on an app in \"Selected Apps\" screen)\n- Privacy Policy link in About Me\n- F-Droid link in About Me\n\n[Announcment]\n\n- Next update will take sometime as i will implement user requested features &amp; reported bugs all at once, bare with me please!\n\nIf you want to contribute with translations, visit GitHub repo or Email me.\n\n_______\n\nv5.8r (12.9.2018//10:25:57)\n\n[NEW]\n\n- Currently selected apps ( Feature Request )\n\nNow you can check your selected apps without opening the app selector; you can also open specific app settings screen by clicking on it. ( This feature will get more updates such as Usage Time per App )\n\n[FIXED]\n\n- Some database values\n- Some UI Bugs\n\n_______\n\nv5.7r (10.9.2018//11:11:41)\n\n[FIXED]\n\n- OpenCounters changed from double digits to: 2,3,4,5\n\n[ANNOUNCEMENT]\n\n- GOYP is now on F-Droid!\n\n_______\n\nv5.6r (21.7.2018//10:40:31)\n\n[NEW]\n\n- You can now contribute to translations! Email me if you are interested in translating the app :)\n\n[Fixed]\n\n- Some of the selected apps disappearing (Thanks to a user bug report!)\n- Crash upon pressing on Bug Reporter (This has been completely removed)\n\n[Updated]\n\n- Multi Selector Library\n- Other dependancies\n- Playstore screenshots\n- Added support email in About\n- Added GitHub account in About\n\n\nThankyou for taking the time and leaving bug reports/feedback!\n\nHave a wonderful weekend!
+    </string>
+    <string name="custom_list_hint">(Apreta en las apps para más información)</string>
+    <string name="custom_list_name">Nombre</string>
+    <string name="custom_list_title">Apps seleccionadas actualmente </string>
+    <string name="custom_list_version">Versión: </string>
+    <string name="description">Podés bloquear tus apps seleccionadas con las siguientes opciones</string>
+    <string name="dialog_description">v6.1r\nUna app que simplemente intenta hacer tu día más productivo;\nSi te ayudo, seria de gran ayuda que dejes un puntaje!"</string>
+    <string name="drawer_item1_text">Seleccionar apps</string>
+    <string name="drawer_item1_text2">Seleccionar que apps bloquear</string>
+    <string name="drawer_item2_dialog_message">Información general:\n\n1- NO podés bloquear apps sin configurar un periodo de tiempo antes\n2- PODÉS bloquear apps sin seleccionar un estado\n3- Al confirmar un bloqueo la app se cerrará y una notificación aparecerá\n4- Podés cerrar esta notificación, y una notifiación de "Contador terminado" aparecerá cuando termine el tiempo\n\n______\n\n-Seleccionar periodo de tiempo deseado:\nEsta opción es donde pasa la magia, seleccionas un periodo de tiempo, que será el tiempo en el que las apps estarán bloqueadas. No podrás cambiar hasta que el tiempo de bloqueo termine. Por favor no forzar la detención de esta app o tendrás que borrar los datos de app.\n\n-Estado deseado:\nSi esto está activado, se desactivara WiFi/Datos hasta que el periodo de tiempo termine.\n\nEso es todo!</string>
+    <string name="drawer_item2_dialog_title">Ayuda</string>
+    <string name="drawer_item2_text">Ayuda</string>
+    <string name="drawer_item2_text2">Información importante de uso</string>
+    <string name="drawer_item3_dialog_title">Cambios recientes</string>
+    <string name="drawer_item3_text">Cambios recientes</string>
+    <string name="drawer_item3_text2">Que hay de nuevo en esta versión</string>
+    <string name="drawer_item4_text">Librerias</string>
+    <string name="drawer_item4_text2">Las librerias usadas para cocinar esta app</string>
+    <string name="drawer_item5_dialog_message">Redes Sociales</string>
+    <string name="drawer_item5_dialog_title">Acerca de</string>
+    <string name="drawer_item5_text">Sobre mi</string>
+    <string name="drawer_item5_text2">Redes Sociales</string>
+    <string name="drawer_item6_text">Apps seleccionadas</string>
+    <string name="drawer_item6_text2">Apps que ya seleccionaste para bloquear</string>
+    <string name="hours">Horas: </string>
+    <string name="lockBT_dialog_message">No puedes cambiar estas preferencias hasta que el contador termine!</string>
+    <string name="lockBT_dialog_title">Confirmar selecciones?</string>
+    <string name="lock_button">BLOQUEAR APPS SELECCIONADAS!</string>
+    <string name="minutes"> Minutos</string>
+    <string name="not_running">Contador no corriendo</string>
+    <string name="notification_message">Ahora puedes usar tus apps</string>
+    <string name="notification_title1">Apreta para abrir app</string>
+    <string name="notification_title2">Periodo de tiempo terminado!</string>
+    <string name="open_times">+ Veces</string>
+    <string name="permission_check_message">Sin este permiso, la app no funcionará</string>
+    <string name="permission_check_title">Deseas dar acceso a datos de uso?</string>
+    <string name="privacy_element">Politicas de privacidad</string>
+    <string msgid="730395136688082741" name="search_menu_title">"Buscar"</string>
+    <string name="select_desired_state">Selecciona el estado deseado.</string>
+    <string name="select_desired_time">Selecciona el tiempo deseado.</string>
+    <string name="selected_apps">Apps seleccionadas: </string>
+    <string name="selected_state">Estado seleccionado: </string>
+    <string name="selected_time">Periodo de tiempo seleccionado: </string>
+    <string name="start_by_swiping_left">Empieza deslizando a la izquierda.</string>
+    <string name="state">\nEstado: </string>
+    <string msgid="8106346172024741305" name="status_bar_notification_info_overflow">"999+"</string>
+    <string name="swipe_item1">Solo un poco de control, bloquea mis apps por 30 minutos</string>
+    <string name="swipe_item2">Fácil y rapido, bloquea mis apps por 1 hora</string>
+    <string name="swipe_item3">Necesito completar una tarea que tarda algo de tiempo, bloquea mis apps por 2 horas</string>
+    <string name="swipe_item4">POR FAVOR AYUDAME!!! Bloquea mis apps por 3 horas!</string>
+    <string name="swipe_item5">Apagar WiFi</string>
+    <string name="swipe_item6">Apagar WiFi y Datos mobiles</string>
+    <string name="swipe_root_alert"> Root no detectado</string>
+    <string name="system_wide_lock">BLOQUEO DE TODO EL SISTEMA</string>
+    <string name="time_chosen">Periodo de tiempo elegido: </string>
+    <string name="time_left1">Tiempo restante: </string>
+    <string name="time_left2">Tiempo restante para desbloquear: </string>
+    <string name="times"> Veces</string>
+    <string name="title">Get Off Your Phone</string>
+    <string name="toast_already_running">La selección va a ser ignorada hasta que el contador termine</string>
+    <string name="toast_no_hour_selection">No se seleccionó ninguna hora</string>
+    <string name="toast_no_state_selection">\nNo se seleccionó ningun estado</string>
+    <string name="usage_dialog_bt1">Configuración de app</string>
+    <string name="usage_dialog_bt2">Iniciar app</string>
+    <string name="usage_dialog_message">Uso de hoy: </string>
+    <string name="usage_dialog_title">Información de app</string>
+</resources>

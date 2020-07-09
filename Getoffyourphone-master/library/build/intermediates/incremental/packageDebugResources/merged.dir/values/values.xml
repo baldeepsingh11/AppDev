@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#000000</color>
+    <color name="blue">#1E88E5</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="grey">#d3d3d3</color>
+    <color name="white">#FFFFFF</color>
+    <dimen name="font_size_heading">25sp</dimen>
+    <dimen name="font_size_normal">14sp</dimen>
+    <dimen name="font_size_subheading">18sp</dimen>
+    <dimen name="layout_margin">10dp</dimen>
+    <dimen name="line_margin">40dp</dimen>
+    <dimen name="recyclerview_margin">10dp</dimen>
+    <dimen name="searchview_margin">5dp</dimen>
+    <dimen name="text_button_size">14sp</dimen>
+    <dimen name="textview_margin">10dp</dimen>
+    <string name="app_name">Library</string>
+    <string name="clear_all">CLEAR ALL</string>
+    <string name="dialog_cancel_text">CANCEL</string>
+    <string name="dialog_done_text">DONE</string>
+    <string name="list_empty">No items to display</string>
+    <string name="select_entry">Select Entries</string>
+</resources>

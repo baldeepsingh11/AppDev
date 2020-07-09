@@ -1,0 +1,53 @@
+{
+    "logs": [
+        {
+            "outputFile": "E:\\gti project\\Getoffyourphone-master\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\hp\\.gradle\\caches\\transforms-2\\files-2.1\\2ab6aa5e71bb49683eea0786a8f734d9\\materialize-1.2.0\\res\\values-night-v8\\values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,141,263,361,495,573,687,753",
+                        "endColumns": "85,121,97,133,77,113,65,101",
+                        "endOffsets": "136,258,356,490,568,682,748,850"
+                    },
+                    "to": {
+                        "startLines": "7,8,9,10,11,12,13,14",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "338,424,546,644,778,856,970,1036",
+                        "endColumns": "85,121,97,133,77,113,65,101",
+                        "endOffsets": "419,541,639,773,851,965,1031,1133"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\hp\\.gradle\\caches\\transforms-2\\files-2.1\\83b9a8884a68770fe08bf47f50e76d88\\jetified-android-about-page-1.2.4\\res\\values-night-v8\\values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6",
+                        "startColumns": "4,4,4,4,4",
+                        "startOffsets": "55,112,175,231,287",
+                        "endColumns": "56,62,55,55,50",
+                        "endOffsets": "107,170,226,282,333"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\hp\\.gradle\\caches\\transforms-2\\files-2.1\\1527d2b8ec815e691b926581256a0c7e\\appcompat-1.1.0\\res\\values-night-v8\\values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,209,293,389,491,593,687",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "120,204,288,384,486,588,682,771"
+                    },
+                    "to": {
+                        "startLines": "15,16,17,18,19,20,21,22",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "1138,1208,1292,1376,1472,1574,1676,1770",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "1203,1287,1371,1467,1569,1671,1765,1854"
+                    }
+                }
+            ]
+        }
+    ]
+}

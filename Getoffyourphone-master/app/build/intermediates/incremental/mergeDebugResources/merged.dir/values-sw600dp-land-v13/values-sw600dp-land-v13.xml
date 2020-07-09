@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="cafebar_floating_min_width">288dp</dimen>
+</resources>

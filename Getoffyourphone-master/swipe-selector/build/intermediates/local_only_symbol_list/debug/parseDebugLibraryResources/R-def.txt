@@ -1,0 +1,35 @@
+R_DEF: Internal format may change without notice
+local
+attr? swipe_customFontPath
+attr? swipe_descriptionGravity
+attr? swipe_descriptionTextAppearance
+attr? swipe_indicatorActiveColor
+attr? swipe_indicatorInActiveColor
+attr? swipe_indicatorMargin
+attr? swipe_indicatorSize
+attr? swipe_itemsXmlResource
+attr? swipe_leftButtonResource
+attr? swipe_rightButtonResource
+attr? swipe_titleTextAppearance
+attr? swipe_unselectedItemDescription
+attr? swipe_unselectedItemTitle
+color swipeselector_color_indicator_active
+color swipeselector_color_indicator_inactive
+drawable ic_action_navigation_chevron_left
+drawable ic_action_navigation_chevron_right
+id center
+id left
+id right
+id swipeselector_content_description
+id swipeselector_content_title
+id swipeselector_layout_circleContainer
+id swipeselector_layout_leftButton
+id swipeselector_layout_rightButton
+id swipeselector_layout_swipePager
+layout swipeselector_circle_item
+layout swipeselector_content_item
+layout swipeselector_layout
+string app_name
+string move_left
+string move_right
+styleable SwipeSelector swipe_itemsXmlResource swipe_unselectedItemTitle swipe_unselectedItemDescription swipe_indicatorSize swipe_indicatorMargin swipe_indicatorActiveColor swipe_indicatorInActiveColor swipe_leftButtonResource swipe_rightButtonResource swipe_customFontPath swipe_titleTextAppearance swipe_descriptionTextAppearance swipe_descriptionGravity
