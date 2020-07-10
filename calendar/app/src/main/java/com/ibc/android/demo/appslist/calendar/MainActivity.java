@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
         CollapseCalendarView calendarView = (CollapseCalendarView) findViewById(R.id.calendar);
         calendarView.init(org.joda.time.LocalDate.now(),org.joda.time.LocalDate.now(),org.joda.time.LocalDate.now().plusYears(1));
-        startActivity(new Intent(MainActivity.this, Day_activity.class));
+
 
 
 
