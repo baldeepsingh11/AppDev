@@ -17,9 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.whatsappclone.fragments.UserFragment;
-import com.example.whatsappclone.fragments.chatsFragment;
-import com.example.whatsappclone.fragments.profile_fragment;
+
 import com.example.whatsappclone.mode.Users;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,9 +60,7 @@ public class MainActivity extends AppCompatActivity {
         ViewPager viewPager= findViewById(R.id.viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFragement(new chatsFragment(),"Chats");
-        viewPagerAdapter.addFragement(new UserFragment(),"Users");
-        viewPagerAdapter.addFragement(new profile_fragment(),"Profile");
+       
 
         viewPager.setAdapter(viewPagerAdapter);
 

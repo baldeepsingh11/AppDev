@@ -1,12 +1,17 @@
 package com.example.smartify;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -26,6 +31,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String PREF_USER_FIRST_TIME ="user_first_time" ;
     static SensorManager sensorManager;
     static Sensor accelerometerSensor;
     static Sensor proximitySensor;
@@ -63,14 +69,24 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "First Run", Toast.LENGTH_LONG)
                     .show();
         }
-        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-        startActivity(intent);
 
-        Intent intent1 = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-        startActivity(intent1);
+
+        if (!isUsageAccessGranted()) {
+            Log.i("hbjbdjjx","vbdhbvhdxb");
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            startActivity(intent);
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {   //Android M Or Over
+            Log.i("hbjbdjjx","vbdhbvhdxb");
+            // Permission is not granted
+            Intent intent1 = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+            startActivity(intent1);
+        }
 
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+            Log.i("hbjbdjjx","vbdhbvhdxb");
             new AlertDialog.Builder(MainActivity.this)
                     .setTitle("Permission")
                     .setIcon(android.R.drawable.ic_btn_speak_now)
@@ -88,8 +104,11 @@ public class MainActivity extends AppCompatActivity {
                         }
                     })
                     .show();
-
         }
+
+
+
+
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         proximitySensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
@@ -154,6 +173,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.i("info","destroy");
         super.onDestroy();
+}
+
+    private boolean isUsageAccessGranted() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+            int mode = 0;
+            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.KITKAT) {
+                mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
+                        applicationInfo.uid, applicationInfo.packageName);
+            }
+            return (mode == AppOpsManager.MODE_ALLOWED);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 }
 

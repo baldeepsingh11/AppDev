@@ -1,5 +1,12 @@
 package com.example.smartify;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 
@@ -11,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -29,7 +37,7 @@ import co.mobiwise.materialintro.view.MaterialIntroView;
 import static com.example.smartify.ExampleService.flipSettings;
 
 public class Flip extends AppCompatActivity {
-
+    public static NotificationManager mNotificationManager;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -107,6 +115,9 @@ public class Flip extends AppCompatActivity {
                 .show();
         fab.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
         fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(Flip.this, R.color.colorPrimary)));
+
+
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

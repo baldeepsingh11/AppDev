@@ -1,8 +1,10 @@
 package com.example.smartify;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -26,6 +28,7 @@ import android.widget.Toast;
 
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ public class autoRotate extends ListActivity {
     Button start_stop;
     AlertDialog alert;
     boolean started = false;
+    public static NotificationManager mNotificationManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,11 @@ public class autoRotate extends ListActivity {
         packageManager = getPackageManager();
 
         new LoadApplications().execute();
+
+
+
+
+
 
 
     }
