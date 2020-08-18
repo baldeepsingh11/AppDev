@@ -1,5 +1,4 @@
 package com.example.smartify;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -48,3 +47,4 @@ public class Utils {
     }
 
 }
+

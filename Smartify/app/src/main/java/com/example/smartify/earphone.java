@@ -1,9 +1,14 @@
 package com.example.smartify;
 
+import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -14,70 +19,100 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+;
+public class earphone extends ListActivity {
+    private PackageManager packageManager = null;
+    private List<ApplicationInfo> applist = null;
+    private earphoneAdapter listadaptor = null;
 
-public class earphone extends AppCompatActivity {
-    static TextView textView;
-    public static int currentItem;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_earphone);
-        Intent serviceIntent = new Intent(this , ExampleService.class);
-        startService(serviceIntent);
-        textView = findViewById(R.id.text);
 
-        ListView userInstalledApps = (ListView)findViewById(R.id.installed_app_list);
+        packageManager = getPackageManager();
 
-        List<AppList> installedApps = getInstalledApps();
-        AppAdapter installedAppAdapter = new AppAdapter(earphone.this, installedApps);
-        userInstalledApps.setAdapter(installedAppAdapter);
-        userInstalledApps.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ImageView imageView= (ImageView) findViewById(R.id.imageView2);
-                imageView.setVisibility(1);
-                Log.i("pos",Integer.toString(position));
+        new LoadApplications().execute();
+        getListView().setDividerHeight(0);
+        getListView().setDivider(null);
+    }
+
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        ApplicationInfo app = applist.get(position);
+        try {
+            Intent intent = packageManager
+                    .getLaunchIntentForPackage(app.packageName);
+
+            if (null != intent) {
+                startActivity(intent);
             }
-        });
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //   return true;
-        // }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private List<AppList> getInstalledApps() {
-        List<AppList> res = new ArrayList<AppList>();
-        List<PackageInfo> packs = getPackageManager().getInstalledPackages(0);
-        for (int i = 0; i < packs.size(); i++) {
-            PackageInfo p = packs.get(i);
-            String appName = p.applicationInfo.loadLabel(getPackageManager()).toString();
-            Drawable icon = p.applicationInfo.loadIcon(getPackageManager());
-           Drawable tick = getDrawable(R.drawable.green_tick);
-            res.add(new AppList(appName, icon,tick));
-
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(earphone.this, e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Toast.makeText(earphone.this, e.getMessage(),
+                    Toast.LENGTH_LONG).show();
         }
-        return res;
     }
 
-    private boolean isSystemPackage(PackageInfo pkgInfo) {
-        return ((pkgInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0) ? true : false;
+    private List<ApplicationInfo> checkForLaunchIntent(List<ApplicationInfo> list) {
+        ArrayList<ApplicationInfo> applist = new ArrayList<ApplicationInfo>();
+        for (ApplicationInfo info : list) {
+            try {
+                if (null != packageManager.getLaunchIntentForPackage(info.packageName)) {
+                    applist.add(info);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return applist;
+    }
+
+    private class LoadApplications extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog progress = null;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            applist = checkForLaunchIntent(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
+            listadaptor = new earphoneAdapter(earphone.this,
+                    R.layout.row1, applist);
+
+            return null;
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            setListAdapter(listadaptor);
+            progress.dismiss();
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(earphone.this, null,
+                    "Loading application info...");
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
     }
 }

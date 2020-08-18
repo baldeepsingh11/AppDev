@@ -21,19 +21,22 @@ import androidx.viewpager.widget.PagerAdapter;
     }
     //Arrays
     public int[] slide_images={
-      R.drawable.code_icon,
-      R.drawable.sleep_icon,
-            R.drawable.code_icon
+            R.drawable.bg_green,
+            R.drawable.bg_location,
+            R.drawable.bg_auto_rotate,
+            R.drawable.bg_earphone
     };
     public String[] slide_headings={
-            "Heading1",
-            "Heading2",
-            "Heading3"
+            "Flip",
+            "Location",
+            "Auto-Rotate",
+            "Earphone"
     };
     public String[] slide_descs={
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged",
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged",
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged"
+            "Flip is a feature that can make your life slightly easy. Like many times phone vibrates when you are in the meeting or in between something important. So it helps you to put your phone in do not disturb mode as you flip the phone.",
+            "The second feature is the location. As many times it happens when you go to the office, school, etc etc you turn on the wifi and turn off data. So it helps you to reduce that . just feed the location at which you want, set its radius and it will be automatic turn on and off.",
+            "The third feature is the auto-rotate. It helps you turn on and off the auto-rotate of the screen automatically. Just select apps you want to do that function and it will rotate.",
+            "The fourth feature is earphone-plugin. Like sometimes it is annoying to start the app after earphone is plugged. so this feature helps you to automatically start the app that you selected after earphone is plugged."
     };
     @Override
     public int getCount() {

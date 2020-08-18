@@ -1,13 +1,15 @@
 package com.example.smartify;
 
-import android.Manifest;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -18,7 +20,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,9 +40,10 @@ import co.mobiwise.materialintro.shape.ShapeType;
 import co.mobiwise.materialintro.view.MaterialIntroView;
 
 import static com.example.smartify.ExampleService.flipSettings;
+import static com.example.smartify.MainActivity.mNotificationManager;
 
 public class Flip extends AppCompatActivity {
-    public static NotificationManager mNotificationManager;
+    FloatingActionButton fab;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -96,8 +102,61 @@ public class Flip extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flip);
         Toolbar toolbar = findViewById(R.id.toolbar);
+
+        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
+            Log.i("hbjbdjjx","vbdhbvhdxb");
+            new AlertDialog.Builder(Flip.this)
+                    .setTitle("Permission")
+                    .setIcon(android.R.drawable.ic_btn_speak_now)
+                    .setMessage("Please grant DND permission")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .show();
+        }
+
+        if (!isUsageAccessGranted()) {
+            Log.i("hbjbdjjx","vbdhbvhdxb");
+            new AlertDialog.Builder(Flip.this)
+                    .setTitle("Permission")
+                    .setIcon(android.R.drawable.ic_btn_speak_now)
+                    .setMessage("Please grant usage access permission")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                            startActivity(intent);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .show();
+            
+        }
+
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
+        if(ExampleService.flip==true)
+        {
+            fab.setImageResource(R.drawable.ic_do_not_disturb_on_white_24dp);
+        }
+        else
+        {
+            fab.setImageResource(R.drawable.ic_do_not_disturb_off_white_24dp);
+        }
         new MaterialIntroView.Builder(this)
                 .enableDotAnimation(true)
                 .enableIcon(true)
@@ -113,11 +172,7 @@ public class Flip extends AppCompatActivity {
                 .setUsageId("intro_fab") //THIS SHOULD BE UNIQUE ID
                 .setMaskColor(ContextCompat.getColor(Flip.this,R.color.whiteTransparent))
                 .show();
-        fab.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
         fab.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(Flip.this, R.color.colorPrimary)));
-
-
-
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,11 +183,29 @@ public class Flip extends AppCompatActivity {
                 {
                     ExampleService.flip=false;
                     Toast.makeText(Flip.this, "Switched off", Toast.LENGTH_SHORT).show();
+                    fab.setImageResource(R.drawable.ic_do_not_disturb_off_white_24dp);
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        v.vibrate(200);
+                    }
                 }
                 else
                 {
                     ExampleService.flip=true;
                     Toast.makeText(Flip.this, "Switched on", Toast.LENGTH_SHORT).show();
+                    fab.setImageResource(R.drawable.ic_do_not_disturb_on_white_24dp);
+                    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+                    // Vibrate for 500 milliseconds
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        //deprecated in API 26
+                        v.vibrate(200);
+                    }
                 }
             }
         });
@@ -143,6 +216,23 @@ public class Flip extends AppCompatActivity {
             alarms.setChecked(true);
         }*/
 
+    }
+
+    private boolean isUsageAccessGranted() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+            int mode = 0;
+            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.KITKAT) {
+                mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
+                        applicationInfo.uid, applicationInfo.packageName);
+            }
+            return (mode == AppOpsManager.MODE_ALLOWED);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
 }

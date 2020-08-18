@@ -6,6 +6,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.location.Location;
@@ -137,6 +139,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
@@ -212,20 +215,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fabDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                delete(current_Id);
-                current_Id=-1;
+                new AlertDialog.Builder(MapsActivity.this)
+                        .setTitle("Delete Location")
+                        .setMessage("Are you sure you want to delete this location?")
+
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                delete(current_Id);
+                                current_Id=-1;
+                                // Continue with delete operation
+                            }
+                        })
+
+                        // A null listener allows the button to dismiss the dialog and take no further action.
+                        .setNegativeButton(android.R.string.no, null)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+
             }
         });
         fabWifi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (wifiList.get(current_Id)==0){
+                if (wifiList.get(current_Id)==0)
+                {   fabWifi.setAlpha(1f);
                     wifiList.set(current_Id,1);
                     fabWifi.setImageResource(R.drawable.ic_signal_wifi_4_bar_black_24dp);
+                    Toast.makeText(MapsActivity.this, "WIFI will be enabled at this Location", Toast.LENGTH_SHORT).show();
                 }
                 else if(wifiList.get(current_Id)==1){
                     wifiList.set(current_Id,0);
                     fabWifi.setImageResource(R.drawable.ic_signal_wifi_off_black_24dp);
+                    fabWifi.setAlpha(0.7f);
+                    Toast.makeText(MapsActivity.this, "WIFI will be unaffected for this Location", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -233,12 +257,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View view) {
                 if(dndList.get(current_Id)==0){
+                    fabDnd.setAlpha(1f);
                     dndList.set(current_Id,1);
                     fabDnd.setImageResource(R.drawable.ic_do_not_disturb_on_black_24dp);
+                    Toast.makeText(MapsActivity.this, "DND will be enabled at this Location", Toast.LENGTH_SHORT).show();
                 }
                 else if(dndList.get(current_Id)==1){
                     dndList.set(current_Id,0);
                     fabDnd.setImageResource(R.drawable.ic_do_not_disturb_off_black_24dp);
+                    Toast.makeText(MapsActivity.this, "DND will be unaffected for this Location", Toast.LENGTH_SHORT).show();
+                    fabDnd.setAlpha(0.7f);
                 }
             }
         });
@@ -265,6 +293,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         else {
             ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }
+        Toast.makeText(this, "Long press on the Map to add location!", Toast.LENGTH_LONG).show();
 
     }
 

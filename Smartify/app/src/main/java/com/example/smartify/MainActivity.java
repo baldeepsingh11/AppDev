@@ -1,17 +1,12 @@
 package com.example.smartify;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -19,9 +14,13 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.Marker;
@@ -31,7 +30,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String PREF_USER_FIRST_TIME ="user_first_time" ;
     static SensorManager sensorManager;
     static Sensor accelerometerSensor;
     static Sensor proximitySensor;
@@ -56,11 +54,74 @@ public class MainActivity extends AppCompatActivity {
         Intent autoIntent = new Intent(MainActivity.this, autoRotate.class);
         startActivity(autoIntent);
     }
+    private int i=0;
+    private ImageView imageView;
+    private ImageView imageDesmartify;
+    Toast toastObject;
+
+    Handler handler=new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what==100){
+                i=0;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        imageView= findViewById(R.id.imageView);
+        imageDesmartify= findViewById(R.id.imageViewDesmartify);
+        imageDesmartify.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                imageDesmartify.animate().alpha(0).setDuration(500);
+                imageView.animate().alpha(1).setDuration(500);
+                Toast.makeText(MainActivity.this, "Smartifyed :)", Toast.LENGTH_SHORT).show();
+                Intent serviceIntent = new Intent(MainActivity.this,ExampleService.class);
+                startService(serviceIntent);
+                return true;
+            }
+        });
+        imageDesmartify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (i==0){
+                    ++i;
+                    handler.sendEmptyMessageDelayed(100,4000); // 3000 equal 3sec , you can set your own limit of secs
+                }else if(i==6){
+                    toastObject.cancel();
+                    toastObject =Toast.makeText(MainActivity.this, "Desmartifyed!" , Toast.LENGTH_SHORT);
+                    toastObject.show();
+                    i=0;
+                    handler.removeMessages(100);
+                    imageView.animate().rotationYBy(360).alpha(0).setDuration(500);
+                    imageDesmartify.animate().rotationYBy(360).alpha(1).setDuration(500);
+                    Intent serviceIntent = new Intent(MainActivity.this,ExampleService.class);
+                    stopService(serviceIntent);
+                }else if (i==3) {
+                    ++i;
+                    toastObject =Toast.makeText(MainActivity.this, "three steps away from desmartifying" , Toast.LENGTH_SHORT);
+                    toastObject.show();
+                }else if (i==4) {
+                    ++i;
+                    toastObject.cancel();
+                    toastObject =Toast.makeText(MainActivity.this, "two steps away from desmartifying" , Toast.LENGTH_SHORT);
+                    toastObject.show();
+                }else if (i==5) {
+                    ++i;
+                    toastObject.cancel();
+                    toastObject =Toast.makeText(MainActivity.this, "one steps away from desmartifying" , Toast.LENGTH_SHORT);
+                    toastObject.show();
+                }
+                else{
+                    i++;
+                }
+            }
+        });
         Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE)
                 .getBoolean("isFirstRun", true);
         if (isFirstRun) {
@@ -69,44 +130,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "First Run", Toast.LENGTH_LONG)
                     .show();
         }
-
-
-        if (!isUsageAccessGranted()) {
-            Log.i("hbjbdjjx","vbdhbvhdxb");
-            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-            startActivity(intent);
-        }
-
-        if (android.os.Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {   //Android M Or Over
-            Log.i("hbjbdjjx","vbdhbvhdxb");
-            // Permission is not granted
-            Intent intent1 = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-            startActivity(intent1);
-        }
-
-        mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (!mNotificationManager.isNotificationPolicyAccessGranted()) {
-            Log.i("hbjbdjjx","vbdhbvhdxb");
-            new AlertDialog.Builder(MainActivity.this)
-                    .setTitle("Permission")
-                    .setIcon(android.R.drawable.ic_btn_speak_now)
-                    .setMessage("Please grant DND permission")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS);
-                            startActivity(intent);
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    .show();
-        }
-
-
 
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -152,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i("info","resume");
         super.onResume();
         if(accelerometerPresent){
-            sensorManager.registerListener(ExampleService.accelerometerListener, accelerometerSensor,1000);
-            sensorManager.registerListener(ExampleService.accelerometerListener, proximitySensor, 1000);
+            sensorManager.registerListener(ExampleService.accelerometerListener, accelerometerSensor,2000,ExampleService.serviceHandler);
+            sensorManager.registerListener(ExampleService.accelerometerListener, proximitySensor, 2000,ExampleService.serviceHandler);
         }
     }
 
@@ -173,23 +196,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         Log.i("info","destroy");
         super.onDestroy();
-}
-
-    private boolean isUsageAccessGranted() {
-        try {
-            PackageManager packageManager = getPackageManager();
-            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
-            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
-            int mode = 0;
-            if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.KITKAT) {
-                mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
-                        applicationInfo.uid, applicationInfo.packageName);
-            }
-            return (mode == AppOpsManager.MODE_ALLOWED);
-
-        } catch (PackageManager.NameNotFoundException e) {
-            return false;
-        }
     }
 }
 

@@ -5,7 +5,6 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -14,18 +13,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -38,12 +33,9 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import androidx.annotation.LongDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
@@ -60,13 +52,9 @@ import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
-import java.util.concurrent.ExecutionException;
 
-import static com.example.smartify.MainActivity.accelerometerSensor;
 import static com.example.smartify.MainActivity.mNotificationManager;
-import static com.example.smartify.MainActivity.proximitySensor;
 import static com.example.smartify.MainActivity.sensorManager;
-import static com.example.smartify.MapsActivity.current_Id;
 import static com.example.smartify.MapsActivity.mMap;
 
 
@@ -76,6 +64,7 @@ public class ExampleService extends Service {
     public static ArrayList<Double> longitudeList= new ArrayList<Double>();
     public static ArrayList<Integer> wifiList= new ArrayList<Integer>();
     public static ArrayList<Integer> radiusList= new ArrayList<Integer>();
+    public static String lastAppString=null;
     WindowManager wm;
     LinearLayout ll;
     private View overlay;
@@ -85,7 +74,7 @@ public class ExampleService extends Service {
     boolean proximity=true;
     boolean accelerometer=false;
     private Looper serviceLooper;
-    private ServiceHandler serviceHandler;
+    static public ServiceHandler serviceHandler;
     static boolean flip;
     private static Timer timer = new Timer();
     int fFlag=0;
@@ -101,6 +90,7 @@ public class ExampleService extends Service {
     public static Marker mCurrLocationMarker;
     WindowManager.LayoutParams orientationLayout;
     int rotateFlag =0;
+    String TAG = "debugging";
     String currentApp="";
     int count =0;
     class HeadsetIntentReceiver extends BroadcastReceiver {
@@ -121,11 +111,11 @@ public class ExampleService extends Service {
                     case(1):
                         Log.d(TAG, "Headset plugged");
                         //  Intent intent1 = new Intent(context,MainActivity2.class);
-                        Intent intent1 = getPackageManager().getLaunchIntentForPackage("com.google.android.youtube");
+                        if(lastAppString!=null){Intent intent1 = getPackageManager().getLaunchIntentForPackage(lastAppString);
                         intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         if (intent1 != null) {
                             ExampleService.this.startActivity(intent1);//null pointer check in case package name was not found
-                        }
+                        }}
 
                         // context.startActivity(intent1);
                         break;
@@ -154,29 +144,7 @@ public class ExampleService extends Service {
 
     }
 
-    class ForegroundCheckTask extends AsyncTask<Context, Void, Boolean> {
 
-        @Override
-        protected Boolean doInBackground(Context... params) {
-            final Context context = params[0].getApplicationContext();
-            return isAppOnForeground(context);
-        }
-
-        private boolean isAppOnForeground(Context context) {
-            ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
-            if (appProcesses == null) {
-                return false;
-            }
-            final String packageName = context.getPackageName();
-            for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-                if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(packageName)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 
     // Use like this:
 
@@ -196,10 +164,10 @@ public class ExampleService extends Service {
 
                     @Override
                     public void onSensorChanged(SensorEvent event) {
-                      //  Log.i("info","sensorchanged");
+                   //   Log.i("info","sensorchanged");
                          if(flip) {
                             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-                                if (event.values[2] <= -9.5) {
+                                if (event.values[2] <= -9.6) {
                                     accelerometer = true;
                                 } else {
                                     accelerometer = false;
@@ -218,26 +186,25 @@ public class ExampleService extends Service {
                             }
 
 
-                            if (!accelerometer || !proximity) {
-                          //      Log.i("status","faceup");
-                               if (fFlag==1) {
-                                    //    face.setText("Face UP");
-                                    mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
-                                    fFlag=0;
-
+                            if (!accelerometer && !proximity) {
+                                if (fFlag==1) {
+                                   fFlag=0;
+                                   Log.i(TAG, "onSensorChanged:face up");
+                                   mNotificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_ALL);
                                 }
 
                             } else if (accelerometer && proximity) {
                                if (fFlag==0) {
                                    fFlag=1;
-                                    //    face.setText("Face DOWN");
+                                   Log.i(TAG, "onSensorChanged:face down");
+
                                    new CountDownTimer(2000, 100) {
 
                                        public void onTick(long millisUntilFinished) {
 
                                            innerflag = 0;
                                            Log.d("time",String.valueOf(millisUntilFinished));
-                                           if(!accelerometer || !proximity)
+                                           if(!accelerometer && !proximity)
                                            {
                                                innerflag = 1;
                                                fFlag=0;
@@ -249,8 +216,8 @@ public class ExampleService extends Service {
 
                                        @SuppressLint("WrongConstant")
                                        public void onFinish() {
-                                           Log.i("finish","true");
-                                           if(innerflag==0) {
+                                        //   Log.i("finish","true");
+                                          if(innerflag==0) {
                                                mNotificationManager.setInterruptionFilter(flipSettings);
                                                Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                                                // Vibrate for 500 milliseconds
@@ -394,14 +361,6 @@ public class ExampleService extends Service {
         else
             startForeground(1, new Notification());
         wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        try {
-            boolean foregroud = new ForegroundCheckTask().execute(this).get();
-            Log.d("foregoroundCheck", String.valueOf(foregroud));
-        } catch (Exception e) {
-            Log.i("foregrund check","error");
-            e.printStackTrace();
-        }
-
         thread.start();
         serviceLooper = thread.getLooper();
         serviceHandler = new ServiceHandler(serviceLooper);
@@ -516,12 +475,12 @@ public class ExampleService extends Service {
                 } else {
                     mpackageName = runningTask.get(runningTask.lastKey()).getPackageName();
                     count=0;
-                    Log.d("debug1",mpackageName);
-                    for( Integer strDay : ApplicationAdapter.selectedapp){
+                    //Log.d("debug1",mpackageName);
+                    for( Integer strDay : InstalledAppsAdapter.selectedapp){
 
                         if(autoRotate.selectedappsstring.get(strDay).equals( mpackageName))
-                        {   Log.d("debug2","matched");
-                            if(!currentApp.equals(mpackageName)&&rotateFlag==0){
+                        {   //Log.d("debug2","matched");
+                            if(!currentApp.equals(mpackageName)||rotateFlag==0){
                                 Log.i("auto rotate", "on");
                                 currentApp=mpackageName;
                                 rotateFlag=1;
@@ -534,10 +493,10 @@ public class ExampleService extends Service {
                         }
                         else{
                             count++;
-                            Log.d("debug3","unmatched");
+                            //Log.d("debug3","unmatched");
                         }
                         if(rotateFlag==1){
-                            if(count==ApplicationAdapter.selectedapp.size()){ Log.i("Auto rotate", "Off");
+                            if(count== InstalledAppsAdapter.selectedapp.size()){ Log.i("Auto rotate", "Off");
                                 screenOrientationEnforcer1.start();
                                 rotateFlag=0;}
                         }

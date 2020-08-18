@@ -1,12 +1,8 @@
 package com.example.smartify;
 
-import android.Manifest;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.app.NotificationManager;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,53 +10,88 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
 
 
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class autoRotate extends ListActivity {
+public class autoRotate extends AppCompatActivity {
     private PackageManager packageManager = null;
-    private List<ApplicationInfo> applist = null;
-    private ApplicationAdapter listadaptor = null;
+
     static ArrayList<String> selectedappsstring = new ArrayList<>();
     Button start_stop;
     AlertDialog alert;
     boolean started = false;
-    public static NotificationManager mNotificationManager;
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.Adapter mAdapter;
+    private ArrayList<AppInfo> installedApps;
+    private FloatingActionButton shareButton;
+    private AppsManager appManager;
+    private final String baseURL = "http://192.168.50.48/post.php";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auto_rotate);
 
-        packageManager = getPackageManager();
+        if (android.os.Build.VERSION.SDK_INT >= 23 && !Settings.canDrawOverlays(this)) {   //Android M Or Over
+            Log.i("hbjbdjjx","vbdhbvhdxb");
+            new AlertDialog.Builder(autoRotate.this)
+                    .setTitle("Permission")
+                    .setIcon(android.R.drawable.ic_btn_speak_now)
+                    .setMessage("Please grant overlay permission")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent1 = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                            startActivity(intent1);
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    .show();
 
-        new LoadApplications().execute();
+        }
+
+        installedApps = new ArrayList<AppInfo>();
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycleView);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        appManager = new AppsManager(this);
+        installedApps = appManager.getApps();
+
+        // Initialize a new adapter for RecyclerView
+        mAdapter = new InstalledAppsAdapter(
+                getApplicationContext(),
+                installedApps
+        );
 
 
-
-
-
+        mRecyclerView.setAdapter(mAdapter);
 
 
     }
 
-    @Override
+  /*  @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
  Log.i("msg","ff");
@@ -79,7 +110,7 @@ public class autoRotate extends ListActivity {
             Toast.makeText(autoRotate.this, e.getMessage(),
                     Toast.LENGTH_LONG).show();
         }
-    }
+    }*/
 
     public static class ScreenOrientationEnforcer {
 
@@ -204,13 +235,13 @@ public class autoRotate extends ListActivity {
         return applist;
     }
 
-    private class LoadApplications extends AsyncTask<Void, Void, Void> {
+  /*  private class LoadApplications extends AsyncTask<Void, Void, Void> {
         private ProgressDialog progress = null;
 
         @Override
         protected Void doInBackground(Void... params) {
             applist = checkForLaunchIntent(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
-            listadaptor = new ApplicationAdapter(autoRotate.this,
+            listadaptor = new InstalledAppsAdapter(autoRotate.this,
                     R.layout.row, applist);
 
             return null;
@@ -242,5 +273,6 @@ public class autoRotate extends ListActivity {
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
         }
-    }
+
+    }  */
 }
